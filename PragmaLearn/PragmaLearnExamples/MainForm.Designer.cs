@@ -1,4 +1,4 @@
-﻿namespace PragmaLearnTest
+﻿namespace PragmaLearn.Examples
 {
     partial class MainForm
     {
@@ -28,13 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.bTrainOCR = new System.Windows.Forms.Button();
             this.SuspendLayout();
+            // 
+            // bTrainOCR
+            // 
+            this.bTrainOCR.Location = new System.Drawing.Point(12, 12);
+            this.bTrainOCR.Name = "bTrainOCR";
+            this.bTrainOCR.Size = new System.Drawing.Size(75, 23);
+            this.bTrainOCR.TabIndex = 0;
+            this.bTrainOCR.Text = "Train OCR";
+            this.bTrainOCR.UseVisualStyleBackColor = true;
+            this.bTrainOCR.Click += new System.EventHandler(this.bTrainOCR_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(530, 475);
+            this.Controls.Add(this.bTrainOCR);
             this.Name = "MainForm";
             this.Text = "PragmaLearn";
             this.ResumeLayout(false);
@@ -42,6 +54,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.Button bTrainOCR;
     }
 }
 

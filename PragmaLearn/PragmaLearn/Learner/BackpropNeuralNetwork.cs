@@ -70,14 +70,6 @@ namespace PragmaLearn.Learner
             weights.Clear();
             deltaWeights.Clear();
         }
-        public override void Init(int inputDimension, int outputDimension)
-        {
-            // var hidden = (inputDimension + outputDimension) / 4;
-            // hidden = 8;
-            // Init(inputDimension, outputDimension, inputDimension);// (inputDimension + outputDimension) / 2);
-            Init(inputDimension, inputDimension, outputDimension);
-            // Init(inputDimension, inputDimension * 2, inputDimension * 4, outputDimension);
-        }
 
         public override double[] Predict(double[] input)
         {

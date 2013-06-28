@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearn", "PragmaLearn\PragmaLearn.csproj", "{BD557E4B-9926-497A-B3C4-31469458724E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearnExamples", "PragmaLearnExamples\PragmaLearnExamples.csproj", "{7CA36278-4165-4F99-83A3-BE08FA66B2F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearn.Examples", "PragmaLearnExamples\PragmaLearn.Examples.csproj", "{7CA36278-4165-4F99-83A3-BE08FA66B2F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearnTest", "PragmaLearnTest\PragmaLearnTest.csproj", "{8222899C-0359-4A29-B88D-54A0ED4663D3}"
 EndProject

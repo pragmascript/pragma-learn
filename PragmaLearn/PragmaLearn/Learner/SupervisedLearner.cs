@@ -9,11 +9,6 @@ namespace PragmaLearn.Learner
     public abstract class SupervisedLearner
     {
         double lastMSE;
-        public void Init(Dataset data)
-        {
-            Init(data.input[0].Length, data.output[0].Length);
-        }
-        public abstract void Init(int inputDimension, int outputDimension);
         public abstract double[] Predict(double[] input);
 
         public virtual double Train(Dataset data, int maxIterations = 1, double stopMSE = 0.0, Action test = null)
@@ -21,7 +16,7 @@ namespace PragmaLearn.Learner
             for (int i = 0; i < maxIterations; ++i)
             {
                 lastMSE = train(data);
-                if (i % 100 == 0) 
+                if (i % 100 == 0 && test != null) 
                     test();
                 Console.WriteLine("{1} -> MSE: {0}", lastMSE, i);
                 if (lastMSE <= stopMSE)
