@@ -21,7 +21,7 @@ namespace PragmaLearn.Examples
 
         private void bTrainOCR_Click(object sender, EventArgs e)
         {
-            data = Datasets.OCR.Create();
+            data = PragmaLearn.Exampels.Datasets.OCR.Create();
             network.Init(data.GetInputDimension(), data.GetOutputDimension());
             network.Train(data, maxIterations: 100);
         }
