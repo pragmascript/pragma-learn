@@ -34,7 +34,7 @@ namespace PragmaLearn.Exampels.Datasets
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                for (int x = 0; x < 100; ++x)
+                for (int x = 0; x < 10; ++x)
                 {
                     foreach (var f in fontsToTrain)
                     {

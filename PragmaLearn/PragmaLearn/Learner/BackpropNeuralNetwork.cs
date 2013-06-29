@@ -1,4 +1,4 @@
-﻿#define DROPOUT
+﻿// #define DROPOUT
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace PragmaLearn.Learner
         List<double[]> bias, deltaBias;
 
         const double learningRate = 0.01;
-        const double lambda = 0.0001;
+        const double lambda = 0.0;
 
         public BackpropNeuralNetwork()
 	    {
@@ -39,7 +39,7 @@ namespace PragmaLearn.Learner
             {
                 addLayer(layers[i]);
             }
-            initRandomWeights(0.5);
+            initRandomWeights(1);
         }
     
 

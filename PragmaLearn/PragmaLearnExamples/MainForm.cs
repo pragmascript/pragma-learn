@@ -19,11 +19,68 @@ namespace PragmaLearn.Examples
             InitializeComponent();
         }
 
+      
+
+        void replaceInput(Bitmap bmp)
+        {
+            if (pictureBox1.Image != null)
+            {
+                pictureBox1.Image.Dispose();
+            }
+
+            pictureBox1.Image = bmp;
+            pictureBox1.Refresh();
+        }
+
+        void replaceOutput(Bitmap bmp)
+        {
+            if (pictureBox2.Image != null)
+            {
+                pictureBox2.Image.Dispose();
+            }
+
+            pictureBox2.Image = bmp;
+            pictureBox2.Refresh();
+        }
+
+        int pos = 0;
+        void test()
+        {
+            if (data.VisualizeInput != null)
+            {
+                //  replaceInput(data.VisualizeInput((learner as BackpropNeuralNetwork).PredictReversed(data.output[pos % data.input.Count])));
+
+                replaceInput(data.VisualizeInput(data.input[pos % data.input.Count]));
+                // replaceInput(data.VisualizeOutput(data.output[pos % data.output.Count]));
+            }
+
+            if (data.VisualizeOutput != null)
+            {
+                replaceOutput(data.VisualizeOutput(network.Predict(data.input[pos % data.input.Count])));
+            }
+            pos++;
+        }
+
         private void bTrainOCR_Click(object sender, EventArgs e)
         {
             data = PragmaLearn.Exampels.Datasets.OCR.Create();
-            network.Init(data.GetInputDimension(), data.GetOutputDimension());
-            network.Train(data, maxIterations: 100);
+            var hidden = data.GetInputDimension();
+            network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
+            int batchSize = 100;
+            var batch = new int[batchSize];
+            for (int t = 0; t < 50000; ++t)
+            {
+                Console.WriteLine(t);
+
+                for (int i = 0; i < batchSize; ++i)
+                {
+                    batch[i] = Tools.rnd.Next(data.input.Count);
+                }
+                network.TrainMiniBatch(data, batch);
+                if (t % 10 == 0)
+                    test();
+            }
         }
+
     }
 }
