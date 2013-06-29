@@ -19,8 +19,8 @@ namespace PragmaLearn.Learner
         List<double[]> errors;
         List<double[]> bias, deltaBias;
 
-        const double learningRate = 0.01;
-        const double lambda = 0.0;
+        const double learningRate = 0.001;
+        const double lambda = 1;
 
         public BackpropNeuralNetwork()
 	    {
@@ -291,6 +291,11 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[i];
                     }
+                    
+#if DROPOUT
+                    if (l >= 1)
+                        sum *= 0.5f;
+#endif
                     y[j] = sigmoid(sum);
                 }
                 );
@@ -307,14 +312,14 @@ namespace PragmaLearn.Learner
                 var w = weights[l];
                 var b = bias[l + 1];
 
-                // for (int j = 0; j < b.Length; ++j)
-                Parallel.For(0, b.Length, j =>
+                for (int j = 0; j < b.Length; ++j)
+                //Parallel.For(0, b.Length, j =>
                 {
                     if (l < layers.Count - 2 && Tools.rnd.NextDouble() > 0.5)
                     {
                         y[j] = 0;
-                        return;
-                        // continue;
+                        // return;
+                        continue;
                     }
 
                     var sum = b[j] * 1.0;
@@ -325,7 +330,7 @@ namespace PragmaLearn.Learner
                     }
                     y[j] = sigmoid(sum);
                 }
-                 );
+                 //);
             }
         }
 
