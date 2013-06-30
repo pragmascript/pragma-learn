@@ -34,7 +34,7 @@ namespace PragmaLearn.Exampels.Datasets
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                for (int x = 0; x < 1; ++x)
+                for (int x = 0; x < 100; ++x)
                 {
                     foreach (var f in fontsToTrain)
                     {
@@ -46,8 +46,11 @@ namespace PragmaLearn.Exampels.Datasets
                                 var a = alphabet[i];
                                 g.Clear(Color.Black);
                                 g.TranslateTransform(width / 2, height / 2);
-                                g.RotateTransform(-5.0f + (float)Tools.rnd.NextDouble() * 10.0f);
+                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 20.0f);
                                 g.TranslateTransform(-width / 2, -height / 2);
+                                var dx = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
+                                var dy = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
+                                g.TranslateTransform(dx, dy);
                                 g.DrawString(a, font, Brushes.White, rect, stringFormat);
                                 
                                 g.ResetTransform();

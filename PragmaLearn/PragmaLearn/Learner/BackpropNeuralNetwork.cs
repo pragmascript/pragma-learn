@@ -110,7 +110,7 @@ namespace PragmaLearn.Learner
             Console.WriteLine(weights[0][0, 0]);
             Console.WriteLine(weights[1][0, 0]);
             Console.WriteLine("mse: " + mse / 2);
-            applyDeltaWeights(data.input.Count);
+            applyDeltaWeights(indices.Count());
 
             return (float)(mse / 2);
         }
@@ -148,7 +148,7 @@ namespace PragmaLearn.Learner
                 accumulateDeltaWeights();
             }
 
-            return (float)(mse / data.input.Count);
+            return (float)(mse / indices.Count());
         }
 
         float trainReversed(Dataset data, IEnumerable<int> indices)

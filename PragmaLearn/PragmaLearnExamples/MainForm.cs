@@ -71,10 +71,10 @@ namespace PragmaLearn.Examples
             for (int t = 0; t < 50000; ++t)
             {
                 Console.WriteLine(t);
-
+                int pos = Tools.rnd.Next(data.input.Count);
                 for (int i = 0; i < batchSize; ++i)
                 {
-                    batch[i] = Tools.rnd.Next(data.input.Count);
+                    batch[i] = (pos + i) % data.input.Count;
                 }
                 network.TrainMiniBatch(data, batch);
                 if (t % 10 == 0)
