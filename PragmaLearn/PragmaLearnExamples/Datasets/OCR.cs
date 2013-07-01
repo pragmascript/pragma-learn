@@ -33,19 +33,24 @@ namespace PragmaLearn.Exampels.Datasets
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                for (int x = 0; x < 100; ++x)
+                for (int x = 0; x < 1000; ++x)
                 {
                     // var fonts = fontsToTrain.Shuffle().ToList();
                    //  foreach (var f in fonts)
                     {
-                        for (int i = 0; i < alphabet.Length; ++i)
+                        var ai = Enumerable.Range(0, alphabet.Length).Shuffle().ToList();
+                        // for (int i = 0; i < alphabet.Length; ++i)
+                        foreach (var i in ai)
                         {
                             var f = fontsToTrain[Tools.rnd.Next(fontsToTrain.Length)];
-                            size = 7.0f + (float)Tools.rnd.NextDouble() * 4.0f;
+                            size = 9.0f + (float)Tools.rnd.NextDouble() * 4.0f;
                             using (Font font = new Font(f, size))
                             {
                                 var a = alphabet[i];
                                 g.Clear(Color.Black);
+                                g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                                 g.TranslateTransform(width / 2, height / 2);
                                 g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 45.0f);
                                 g.TranslateTransform(-width / 2, -height / 2);
@@ -83,16 +88,18 @@ namespace PragmaLearn.Exampels.Datasets
         {
             var max = output.MaxIndex();
 
-            Bitmap result = new Bitmap(width, height);
+            Bitmap result = new Bitmap(256, 256);
             StringFormat stringFormat = new StringFormat();
             stringFormat.Alignment = StringAlignment.Center;
             stringFormat.LineAlignment = StringAlignment.Center;
-            const int size = 8;
+            const int size = 80;
 
-            Rectangle rect = new Rectangle(0, 0, width, height);
+            Rectangle rect = new Rectangle(0, 0, 256, 256);
             using (Graphics g = Graphics.FromImage(result))
             {
-                g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+                g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 using (Font font = new Font("Arial", size))
                 {
                     var a = alphabet[max];

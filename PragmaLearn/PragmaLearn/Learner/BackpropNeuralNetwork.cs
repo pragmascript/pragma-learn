@@ -19,7 +19,7 @@ namespace PragmaLearn.Learner
         List<double[]> errors;
         List<double[]> bias, deltaBias;
 
-        public double learningRate = 0.001;
+        public double learningRate = 0.003;
         const double lambda = 1;
 
         public BackpropNeuralNetwork()
@@ -560,17 +560,17 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w1; ++j)
                     {
-                        if (lastdw[i, j] != 0.0)
-                        {
-                            if (Math.Sign(lastdw[i, j]) == Math.Sign(dw[i, j]))
-                            {
-                                step[i, j] = Math.Min(step[i, j] * 1.2, 100.0);
-                            }
-                            else
-                            {
-                                step[i, j] = Math.Max(step[i, j] * 0.5, 0.0001);
-                            }
-                        }
+                        //if (lastdw[i, j] != 0.0)
+                        //{
+                        //    if (Math.Sign(lastdw[i, j]) == Math.Sign(dw[i, j]))
+                        //    {
+                        //        step[i, j] = Math.Min(step[i, j] * 1.2, 100.0);
+                        //    }
+                        //    else
+                        //    {
+                        //        step[i, j] = Math.Max(step[i, j] * 0.5, 0.0001);
+                        //    }
+                        //}
                         if (msa[i, j] == 0.0)
                         {
                             msa[i, j] = dw[i, j] * dw[i, j];
