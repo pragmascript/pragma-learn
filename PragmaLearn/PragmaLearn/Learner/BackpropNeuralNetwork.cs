@@ -20,7 +20,7 @@ namespace PragmaLearn.Learner
         List<double[]> bias, deltaBias;
 
         const double learningRate = 0.001;
-        const double lambda = 0;
+        const double lambda = 1;
 
         public BackpropNeuralNetwork()
 	    {
@@ -115,7 +115,10 @@ namespace PragmaLearn.Learner
             // mse += trainReversed(data, indices);
 
             Console.WriteLine(weights[0][0, 0]);
+            Console.WriteLine(stepSize[0][0, 0]);
+
             Console.WriteLine(weights[1][0, 0]);
+            Console.WriteLine(stepSize[1][0, 0]);
             Console.WriteLine("mse: " + mse / 2);
             applyDeltaWeights(indices.Count());
 
@@ -561,11 +564,11 @@ namespace PragmaLearn.Learner
                         {
                             if (Math.Sign(lastdw[i, j]) == Math.Sign(dw[i, j]))
                             {
-                                step[i, j] = Math.Min(step[i, j] * 1.2, 50.0);
+                                step[i, j] = Math.Min(step[i, j] * 1.2, 100.0);
                             }
                             else
                             {
-                                step[i, j] = Math.Max(step[i, j] * 0.5, 0.0000001);
+                                step[i, j] = Math.Max(step[i, j] * 0.5, 0.0001);
                             }
                         }
                         if (msa[i, j] == 0.0)
@@ -577,6 +580,7 @@ namespace PragmaLearn.Learner
                             msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
                         }
                         // w[i, j] -= ( (1.0/count) * dw[i, j] + lambda * w[i, j]) * learningRate;
+                        dw[i, j] += lambda * w[i, j] * learningRate;
                         var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]); // + lambda * w[i, j] * learningRate;
                         w[i, j] -= s1;
 

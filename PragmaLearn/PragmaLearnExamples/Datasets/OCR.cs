@@ -40,13 +40,13 @@ namespace PragmaLearn.Exampels.Datasets
                     {
                         for (int i = 0; i < alphabet.Length; ++i)
                         {
-                            size = 9.0f + (float)Tools.rnd.NextDouble() * 2.0f;
+                            size = 7.0f + (float)Tools.rnd.NextDouble() * 4.0f;
                             using (Font font = new Font(f, size))
                             {
                                 var a = alphabet[i];
                                 g.Clear(Color.Black);
                                 g.TranslateTransform(width / 2, height / 2);
-                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 20.0f);
+                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 360.0f);
                                 g.TranslateTransform(-width / 2, -height / 2);
                                 var dx = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
                                 var dy = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
