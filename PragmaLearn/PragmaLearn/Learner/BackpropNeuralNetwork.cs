@@ -14,13 +14,13 @@ namespace PragmaLearn.Learner
 {
     public class BackpropNeuralNetwork : SupervisedLearner
     {
-        List<double[,]> weights, deltaWeights, meanSquareAvg;
+        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg, stepSize;
         List<double[]> layers;
         List<double[]> errors;
         List<double[]> bias, deltaBias;
 
-        const double learningRate = 0.001;
-        const double lambda = 1;
+        const double learningRate = 0.0001;
+        const double lambda = 0;
 
         public BackpropNeuralNetwork()
 	    {
@@ -31,6 +31,8 @@ namespace PragmaLearn.Learner
             bias = new List<double[]>();
             deltaBias = new List<double[]>();
             meanSquareAvg = new List<double[,]>();
+            stepSize = new List<double[,]>();
+            lastDeltaWeights = new List<double[,]>();
 	    }
 
 
@@ -41,6 +43,7 @@ namespace PragmaLearn.Learner
                 addLayer(layers[i]);
             }
             initRandomWeights(1);
+            initStepSizes();
         }
     
 
@@ -59,7 +62,9 @@ namespace PragmaLearn.Learner
                 var wj = dim;
                 weights.Add(new double[wi, wj]);
                 deltaWeights.Add(new double[wi, wj]);
+                lastDeltaWeights.Add(new double[wi, wj]);
                 meanSquareAvg.Add(new double[wi, wj]);
+                stepSize.Add(new double[wi, wj]);
             }
         }
 
@@ -243,7 +248,7 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w.GetLength(1); ++j)
                     {
-                        w[i, j] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * size;
+                        w[i, j] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f/Math.Sqrt(w.GetLength(0)));
                     }
                 }
             }
@@ -251,7 +256,21 @@ namespace PragmaLearn.Learner
             {
                 for (int i = 0; i < b.Length; ++i)
                 {
-                    b[i] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * size;
+                    b[i] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f/Math.Sqrt(b.Length));
+                }
+            }
+        }
+        void initStepSizes()
+        {
+            foreach (var step in stepSize)
+            {
+                for (int i = 0; i < step.GetLength(0); ++i)
+                {
+                    for (int j = 0; j < step.GetLength(1); ++j)
+                    {
+                        step[i, j] = 1.0;
+                    }
+
                 }
             }
         }
@@ -494,9 +513,13 @@ namespace PragmaLearn.Learner
 
         void clearDeltaWeights()
         {
-            foreach (var w in deltaWeights)
+            // foreach (var w in deltaWeights)
+            for (int i = 0; i < deltaWeights.Count; ++i)
             {
-                w.Initialize();
+                var w = deltaWeights[i];
+                deltaWeights[i] = lastDeltaWeights[i];
+                deltaWeights[i].Initialize();
+                lastDeltaWeights[i] = w;
             }
 
             foreach (var b in deltaBias)
@@ -521,6 +544,8 @@ namespace PragmaLearn.Learner
             {
                 var w = weights[l];
                 var dw = deltaWeights[l];
+                var lastdw = lastDeltaWeights[l];
+                var step = stepSize[l];
                 var msa = meanSquareAvg[l];
 
                 var w0 = w.GetLength(0);
@@ -532,9 +557,32 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w1; ++j)
                     {
-                        msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
+                        if (lastdw[i, j] != 0.0)
+                        {
+                            if (Math.Sign(lastdw[i, j]) == Math.Sign(dw[i, j]))
+                            {
+                                step[i, j] = Math.Min(step[i, j] * 1.2, 50.0);
+                            }
+                            else
+                            {
+                                step[i, j] = Math.Max(step[i, j] * 0.5, 0.0000001);
+                            }
+                        }
+                        if (msa[i, j] == 0.0)
+                        {
+                            msa[i, j] = dw[i, j] * dw[i, j];
+                        }
+                        else
+                        {
+                            msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
+                        }
                         // w[i, j] -= ( (1.0/count) * dw[i, j] + lambda * w[i, j]) * learningRate;
-                        w[i, j] -= learningRate * dw[i, j] / Math.Sqrt(msa[i, j]);
+                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]); // + lambda * w[i, j] * learningRate;
+                        w[i, j] -= s1;
+
+                        dw[i, j] = (s1 + lastdw[i, j]) * 0.9;
+                        w[i, j] -= dw[i, j];
+                        
                     }
                 }
                 );
