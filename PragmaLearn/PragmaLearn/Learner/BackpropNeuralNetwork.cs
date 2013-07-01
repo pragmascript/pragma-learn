@@ -14,7 +14,7 @@ namespace PragmaLearn.Learner
 {
     public class BackpropNeuralNetwork : SupervisedLearner
     {
-        List<double[,]> weights, deltaWeights;
+        List<double[,]> weights, deltaWeights, meanSquareAvg;
         List<double[]> layers;
         List<double[]> errors;
         List<double[]> bias, deltaBias;
@@ -30,6 +30,7 @@ namespace PragmaLearn.Learner
             errors = new List<double[]>();
             bias = new List<double[]>();
             deltaBias = new List<double[]>();
+            meanSquareAvg = new List<double[,]>();
 	    }
 
 
@@ -58,6 +59,7 @@ namespace PragmaLearn.Learner
                 var wj = dim;
                 weights.Add(new double[wi, wj]);
                 deltaWeights.Add(new double[wi, wj]);
+                meanSquareAvg.Add(new double[wi, wj]);
             }
         }
 
@@ -519,6 +521,7 @@ namespace PragmaLearn.Learner
             {
                 var w = weights[l];
                 var dw = deltaWeights[l];
+                var msa = meanSquareAvg[l];
 
                 var w0 = w.GetLength(0);
                 var w1 = w.GetLength(1);
@@ -529,7 +532,9 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w1; ++j)
                     {
-                        w[i, j] -= ( (1.0/count) * dw[i, j] + lambda * w[i, j]) * learningRate;
+                        msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
+                        // w[i, j] -= ( (1.0/count) * dw[i, j] + lambda * w[i, j]) * learningRate;
+                        w[i, j] -= learningRate * dw[i, j] / Math.Sqrt(msa[i, j]);
                     }
                 }
                 );
