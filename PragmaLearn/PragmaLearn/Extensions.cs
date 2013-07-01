@@ -46,5 +46,13 @@ namespace PragmaLearn
         {
             Control.Invoke(Action);
         }
+
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        {
+            foreach (var item in source.OrderBy(i => Guid.NewGuid()))
+            {
+                yield return item;
+            }
+        }
     }
 }

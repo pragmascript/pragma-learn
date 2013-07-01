@@ -10,8 +10,8 @@ namespace PragmaLearn.Exampels.Datasets
 {
     class OCR
     {
-        static readonly string[] alphabet = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-        static readonly string[] fontsToTrain = { "Arial", "Consolas", "Courier New", "Times New Roman", "Verdana" };
+        static readonly string[] alphabet = { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", ",", "!"};
+        static readonly string[] fontsToTrain = { "Arial", "Consolas", "Courier New", "Times New Roman", "Verdana", "Calibri Light", "Segoe Script",  "Segoe Print", "Liberation Sans", "Cambria", "Impact Standard"};
 
         const int width = 16;
         const int height = 16;
@@ -30,26 +30,27 @@ namespace PragmaLearn.Exampels.Datasets
             Rectangle rect = new Rectangle(0, 0, width, height);
 
 
-
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
                 for (int x = 0; x < 100; ++x)
                 {
-                    foreach (var f in fontsToTrain)
+                    // var fonts = fontsToTrain.Shuffle().ToList();
+                   //  foreach (var f in fonts)
                     {
                         for (int i = 0; i < alphabet.Length; ++i)
                         {
+                            var f = fontsToTrain[Tools.rnd.Next(fontsToTrain.Length)];
                             size = 7.0f + (float)Tools.rnd.NextDouble() * 4.0f;
                             using (Font font = new Font(f, size))
                             {
                                 var a = alphabet[i];
                                 g.Clear(Color.Black);
                                 g.TranslateTransform(width / 2, height / 2);
-                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 360.0f);
+                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 45.0f);
                                 g.TranslateTransform(-width / 2, -height / 2);
-                                var dx = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
-                                var dy = 1 + ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
+                                var dx = ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
+                                var dy = ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
                                 g.TranslateTransform(dx, dy);
                                 g.DrawString(a, font, Brushes.White, rect, stringFormat);
                                 
@@ -65,7 +66,11 @@ namespace PragmaLearn.Exampels.Datasets
             }
             result.VisualizeInput = visualizeInput;
             result.VisualizeOutput = visualizeOutput;
+
+
             return result;
+
+
         }
 
         static Bitmap visualizeInput(double[] input)
