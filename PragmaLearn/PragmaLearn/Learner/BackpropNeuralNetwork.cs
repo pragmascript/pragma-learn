@@ -19,7 +19,7 @@ namespace PragmaLearn.Learner
         List<double[]> errors;
         List<double[]> bias, deltaBias;
 
-        const double learningRate = 0.0001;
+        const double learningRate = 0.001;
         const double lambda = 0;
 
         public BackpropNeuralNetwork()
