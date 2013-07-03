@@ -14,7 +14,7 @@ namespace PragmaLearn.Learner
 {
     public class BackpropNeuralNetwork : SupervisedLearner
     {
-        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg, stepSize;
+        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg; //, stepSize;
         List<double[]> layers;
         List<double[]> errors;
         List<double[]> bias, deltaBias;
@@ -31,7 +31,7 @@ namespace PragmaLearn.Learner
             bias = new List<double[]>();
             deltaBias = new List<double[]>();
             meanSquareAvg = new List<double[,]>();
-            stepSize = new List<double[,]>();
+            // stepSize = new List<double[,]>();
             lastDeltaWeights = new List<double[,]>();
 	    }
 
@@ -43,7 +43,7 @@ namespace PragmaLearn.Learner
                 addLayer(layers[i]);
             }
             initRandomWeights(1);
-            initStepSizes();
+            // initStepSizes();
         }
     
 
@@ -64,7 +64,7 @@ namespace PragmaLearn.Learner
                 deltaWeights.Add(new double[wi, wj]);
                 lastDeltaWeights.Add(new double[wi, wj]);
                 meanSquareAvg.Add(new double[wi, wj]);
-                stepSize.Add(new double[wi, wj]);
+                // stepSize.Add(new double[wi, wj]);
             }
         }
 
@@ -115,10 +115,7 @@ namespace PragmaLearn.Learner
             // mse += trainReversed(data, indices);
 
             Console.WriteLine(weights[0][0, 0]);
-            Console.WriteLine(stepSize[0][0, 0]);
-
             Console.WriteLine(weights[1][0, 0]);
-            Console.WriteLine(stepSize[1][0, 0]);
             Console.WriteLine("mse: " + mse / 2);
             applyDeltaWeights(indices.Count());
 
@@ -263,20 +260,20 @@ namespace PragmaLearn.Learner
                 }
             }
         }
-        void initStepSizes()
-        {
-            foreach (var step in stepSize)
-            {
-                for (int i = 0; i < step.GetLength(0); ++i)
-                {
-                    for (int j = 0; j < step.GetLength(1); ++j)
-                    {
-                        step[i, j] = 1.0;
-                    }
+        //void initStepSizes()
+        //{
+        //    foreach (var step in stepSize)
+        //    {
+        //        for (int i = 0; i < step.GetLength(0); ++i)
+        //        {
+        //            for (int j = 0; j < step.GetLength(1); ++j)
+        //            {
+        //                step[i, j] = 1.0;
+        //            }
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
         void setInput(double[] input)
         {
@@ -548,7 +545,7 @@ namespace PragmaLearn.Learner
                 var w = weights[l];
                 var dw = deltaWeights[l];
                 var lastdw = lastDeltaWeights[l];
-                var step = stepSize[l];
+                //var step = stepSize[l];
                 var msa = meanSquareAvg[l];
 
                 var w0 = w.GetLength(0);

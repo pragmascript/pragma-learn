@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Datasets\Lines.cs" />
     <Compile Include="Datasets\OCR.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

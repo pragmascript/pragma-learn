@@ -65,7 +65,7 @@ namespace PragmaLearn.Examples
         {
             data = PragmaLearn.Exampels.Datasets.OCR.Create();
             var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden / 2, hidden / 4, hidden / 4, hidden / 4, data.GetOutputDimension());
+            network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
             int batchSize = 100;
             var batch = new int[batchSize];
             for (int t = 0; t < 50000; ++t)
@@ -85,6 +85,11 @@ namespace PragmaLearn.Examples
                     test();
                 }
             }
+        }
+
+        private void bTrainLines_Click(object sender, EventArgs e)
+        {
+
         }
 
     }
