@@ -19,7 +19,7 @@ namespace PragmaLearn.Examples
             InitializeComponent();
         }
 
-      
+
 
         void replaceInput(Bitmap bmp)
         {
@@ -59,14 +59,11 @@ namespace PragmaLearn.Examples
                 replaceOutput(data.VisualizeOutput(network.Predict(data.input[pos % data.input.Count])));
             }
             pos++;
+            Refresh();
         }
 
-        private void bTrainOCR_Click(object sender, EventArgs e)
+        private void train(Dataset data, int batchSize = 100)
         {
-            data = PragmaLearn.Exampels.Datasets.OCR.Create();
-            var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
-            int batchSize = 100;
             var batch = new int[batchSize];
             for (int t = 0; t < 50000; ++t)
             {
@@ -77,19 +74,33 @@ namespace PragmaLearn.Examples
                     batch[i] = (pos + i) % data.input.Count;
                 }
                 network.TrainMiniBatch(data, batch);
-                
+
                 Console.WriteLine("LEARNING RATE: " + network.learningRate);
                 network.learningRate *= 0.9998;
-                if (t % 100 == 0)
+                if (t % 10 == 0)
                 {
                     test();
                 }
             }
         }
 
+        private void bTrainOCR_Click(object sender, EventArgs e)
+        {
+            data = PragmaLearn.Exampels.Datasets.OCR.Create();
+            var hidden = data.GetInputDimension();
+            network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
+            
+            train(data, batchSize:100);
+
+        }
+
         private void bTrainLines_Click(object sender, EventArgs e)
         {
+            data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
+            var hidden = data.GetInputDimension();
+            network.Init(data.GetInputDimension(), hidden / 2, hidden / 2, data.GetOutputDimension());
 
+            train(data, batchSize: 100);
         }
 
     }

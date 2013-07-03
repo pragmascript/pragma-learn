@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,40 @@ namespace PragmaLearn
 {
     public static class Extensions
     {
+        public static Bitmap ScaleTo(this Bitmap bmp, int nx, int ny)
+        {
+            var result = new Bitmap(nx, ny);
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                g.DrawImage(bmp, new Rectangle(0, 0, result.Width, result.Height), new Rectangle(0, 0, bmp.Width, bmp.Height), GraphicsUnit.Pixel);
+            }
+
+            return result;
+        }
+
+        public static Bitmap GetPatch(this Bitmap bmp, Rectangle src)
+        {
+            var result = new Bitmap(src.Width, src.Height);
+
+
+            using (var g = Graphics.FromImage(result))
+            {
+                g.DrawImage(bmp, new Rectangle(0, 0, result.Width, result.Height), src, GraphicsUnit.Pixel);
+            }
+
+            return result;
+        }
+
+        public static void Clear(this Bitmap bmp, Color color)
+        {
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
+                g.Clear(color);
+            }
+        }
+
         public static string Print<T>(this T[] a)
         {
             string result = "{ ";

@@ -51,6 +51,7 @@ namespace PragmaLearn.Exampels.Datasets
                                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                                 g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                                 g.TranslateTransform(width / 2, height / 2);
                                 g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 45.0f);
                                 g.TranslateTransform(-width / 2, -height / 2);
@@ -100,6 +101,7 @@ namespace PragmaLearn.Exampels.Datasets
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 using (Font font = new Font("Arial", size))
                 {
                     var a = alphabet[max];

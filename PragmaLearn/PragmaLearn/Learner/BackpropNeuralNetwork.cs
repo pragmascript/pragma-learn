@@ -709,7 +709,6 @@ namespace PragmaLearn.Learner
             for (int i = 0; i < y.Length; ++i)
             {
                 result += (y[i] - output[i]) * (y[i] - output[i]);
-                
             }
 
             return result;

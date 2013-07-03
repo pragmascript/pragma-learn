@@ -15,7 +15,7 @@ namespace PragmaLearn
 {
     public class Tools
     {
-        const double noise = 0.2;
+        const double noise = 0.05;
         static string applicatonPath { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
         public static readonly string DataPath =  Path.GetFullPath((Path.Combine(applicatonPath, @"..\..\Data\")));
 
@@ -66,6 +66,14 @@ namespace PragmaLearn
             return Color.FromArgb(b, 0, 0);
         }
 
+        static bool alreadyOnce = false;
+        public static void Once(Action a)
+        {
+            if (!alreadyOnce)
+                a();
+            alreadyOnce = true;
+        }
+
         /// <summary>
         /// slow slow slow. as hell.
         /// </summary>
@@ -92,6 +100,7 @@ namespace PragmaLearn
             return bmp;
         }
 
+ 
 
     }
 }
