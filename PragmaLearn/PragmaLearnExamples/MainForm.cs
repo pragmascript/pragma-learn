@@ -77,26 +77,33 @@ namespace PragmaLearn.Examples
             Refresh();
         }
 
+
+        volatile bool running;
         private void train(Dataset data, int batchSize = 100, int testModulo = 100)
         {
-            var batch = new int[batchSize];
-            for (int t = 0; t < 50000; ++t)
-            {
-                Console.WriteLine(t);
-                int pos = Tools.rnd.Next(data.input.Count);
-                for (int i = 0; i < batchSize; ++i)
+            Task.Run(() =>
                 {
-                    batch[i] = (pos + i) % data.input.Count;
-                }
-                network.TrainMiniBatch(data, batch);
+                    running = true;
+                    var batch = new int[batchSize];
+                    int t = 0;
+                    while (running)
+                    {
+                        t++;
+                        int pos = Tools.rnd.Next(data.input.Count);
+                        for (int i = 0; i < batchSize; ++i)
+                        {
+                            batch[i] = (pos + i) % data.input.Count;
+                        }
+                        network.TrainMiniBatch(data, batch);
 
-                Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                network.learningRate *= 0.9998;
-                if (t % testModulo == 0)
-                {
-                    test();
-                }
-            }
+                        Console.WriteLine("LEARNING RATE: " + network.learningRate);
+                        network.learningRate *= 0.9998;
+                        if (t % testModulo == 0)
+                        {
+                            this.Invoke(test);
+                        }
+                    }
+                });
         }
 
         private void bTrainOCR_Click(object sender, EventArgs e)
@@ -113,9 +120,14 @@ namespace PragmaLearn.Examples
         {
             data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
             var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
+            network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
 
             train(data, batchSize: 100);
+        }
+
+        private void bStop_Click(object sender, EventArgs e)
+        {
+            running = false;
         }
 
     }

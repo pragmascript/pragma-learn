@@ -66,7 +66,7 @@ namespace PragmaLearn.Exampels.Datasets
     class Lines
     {
         const int minLineCount = 1;
-        const int maxLineCount = 6;
+        const int maxLineCount = 12;
         const float minLineLength = 2.0f;
         const int size = 128;
         const int s_size = 16;
