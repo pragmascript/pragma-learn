@@ -23,13 +23,15 @@ namespace PragmaLearn
             return result;
         }
 
-        public static Bitmap GetPatch(this Bitmap bmp, Rectangle src)
+        public static Bitmap GetPatch(this Bitmap bmp, Rectangle src, int destSize)
         {
-            var result = new Bitmap(src.Width, src.Height);
+            var result = new Bitmap(destSize, destSize);
 
 
             using (var g = Graphics.FromImage(result))
             {
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                 g.DrawImage(bmp, new Rectangle(0, 0, result.Width, result.Height), src, GraphicsUnit.Pixel);
             }
 

@@ -20,6 +20,7 @@ namespace PragmaLearn.Learner
         List<double[]> bias, deltaBias;
 
         public double learningRate = 0.003;
+        public double momentum = 0.9;
         const double lambda = 1;
 
         public BackpropNeuralNetwork()
@@ -581,7 +582,7 @@ namespace PragmaLearn.Learner
                         var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]); // + lambda * w[i, j] * learningRate;
                         w[i, j] -= s1;
 
-                        dw[i, j] = (s1 + lastdw[i, j]) * 0.9;
+                        dw[i, j] = (s1 + lastdw[i, j]) * momentum;
                         w[i, j] -= dw[i, j];
                         
                     }

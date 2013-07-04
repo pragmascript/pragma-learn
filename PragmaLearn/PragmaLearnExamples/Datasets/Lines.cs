@@ -69,7 +69,7 @@ namespace PragmaLearn.Exampels.Datasets
         const int maxLineCount = 6;
         const float minLineLength = 2.0f;
         const int size = 128;
-        const int s_size = 32;
+        const int s_size = 16;
         const float lineDensity = 0.5f;
         const int whiteNoise = 16;
         const float epsilon = 1.5f;
@@ -130,7 +130,7 @@ namespace PragmaLearn.Exampels.Datasets
         {
             using (var g = Graphics.FromImage(bmp))
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
                 foreach (var l in lines)
                 {
                     g.DrawLine(Pens.White, l.pos1, l.pos2);
@@ -140,14 +140,14 @@ namespace PragmaLearn.Exampels.Datasets
 
 
 
-        static Rectangle getRandomPatch()
+        static Rectangle getRandomPatch(int patchSize)
         {
             var result = new Rectangle();
 
-            result.X = Tools.rnd.Next(size - s_size);
-            result.Y = Tools.rnd.Next(size - s_size);
-            result.Width = s_size;
-            result.Height = s_size;
+            result.X = Tools.rnd.Next(size - patchSize);
+            result.Y = Tools.rnd.Next(size - patchSize);
+            result.Width = patchSize;
+            result.Height = patchSize;
 
             return result;
         }
@@ -169,35 +169,45 @@ namespace PragmaLearn.Exampels.Datasets
             }
 
 
-            var patch = getRandomPatch();
 
-            using (var i_bmp = new Bitmap(size, size))
+            bool patchEmpty = true;
+            var patch = default(Rectangle);
+            while (patchEmpty)
             {
-                i_bmp.Clear(Color.Black);
-                foreach (var p in points)
+                patch = getRandomPatch(2 * s_size);
+
+                using (var i_bmp = new Bitmap(size, size))
                 {
-                    var x = p.Xi;
-                    var y = p.Yi;
-                    if (x >= 0 && x < i_bmp.Width && y >= 0 && y < i_bmp.Height)
-                        i_bmp.SetPixel(x, y, Color.White);
-
-
-                }
-                Tools.Once(() => i_bmp.Save("input.png"));
-
-                using (var sbmp = i_bmp.GetPatch(patch))
-                {
-                    input = Tools.bmp_to_double(sbmp);
+                    i_bmp.Clear(Color.Black);
+                    foreach (var p in points)
+                    {
+                        var x = p.Xi;
+                        var y = p.Yi;
+                        if (x >= 0 && x < i_bmp.Width && y >= 0 && y < i_bmp.Height)
+                        {
+                            i_bmp.SetPixel(x, y, Color.White);
+                            if (patch.Contains(p.Xi, p.Yi))
+                                patchEmpty = false;
+                        }
+                    }
+                    if (patchEmpty)
+                        continue;
+                    // Tools.Once(() => i_bmp.Save("input.png"));
+                    using (var pbmp = i_bmp.GetPatch(patch, s_size))
+                    {
+                        input = Tools.bmp_to_double(pbmp);
+                    }
                 }
             }
+
 
             using (var o_bmp = new Bitmap(size, size))
             {
                 o_bmp.Clear(Color.Black);
                 drawLines(lines, o_bmp);
-                using (var sbmp = o_bmp.GetPatch(patch))
+                using (var lbmp = o_bmp.GetPatch(patch, s_size))
                 {
-                    output = Tools.bmp_to_double(sbmp);
+                    output = Tools.bmp_to_double(lbmp);
                 }
             }
 

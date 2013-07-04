@@ -15,7 +15,7 @@ namespace PragmaLearn
 {
     public class Tools
     {
-        const double noise = 0.05;
+        const double noise = 0;
         static string applicatonPath { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
         public static readonly string DataPath =  Path.GetFullPath((Path.Combine(applicatonPath, @"..\..\Data\")));
 

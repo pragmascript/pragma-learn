@@ -42,6 +42,18 @@ namespace PragmaLearn.Examples
             pictureBox2.Image = bmp;
             pictureBox2.Refresh();
         }
+        
+        void replaceNetworkOutput(Bitmap bmp)
+        {
+            if (pictureBox3.Image != null)
+            {
+                pictureBox3.Image.Dispose();
+            }
+
+            pictureBox3.Image = bmp;
+            pictureBox3.Refresh();
+        }
+
 
         int pos = 0;
         void test()
@@ -56,13 +68,16 @@ namespace PragmaLearn.Examples
 
             if (data.VisualizeOutput != null)
             {
-                replaceOutput(data.VisualizeOutput(network.Predict(data.input[pos % data.input.Count])));
+                replaceOutput(data.VisualizeOutput(data.output[pos % data.output.Count]));
+                replaceNetworkOutput(data.VisualizeOutput(network.Predict(data.input[pos % data.input.Count])));
             }
+
+            
             pos++;
             Refresh();
         }
 
-        private void train(Dataset data, int batchSize = 100)
+        private void train(Dataset data, int batchSize = 100, int testModulo = 100)
         {
             var batch = new int[batchSize];
             for (int t = 0; t < 50000; ++t)
@@ -77,7 +92,7 @@ namespace PragmaLearn.Examples
 
                 Console.WriteLine("LEARNING RATE: " + network.learningRate);
                 network.learningRate *= 0.9998;
-                if (t % 10 == 0)
+                if (t % testModulo == 0)
                 {
                     test();
                 }
@@ -98,7 +113,7 @@ namespace PragmaLearn.Examples
         {
             data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
             var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden / 2, hidden / 2, data.GetOutputDimension());
+            network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
 
             train(data, batchSize: 100);
         }
