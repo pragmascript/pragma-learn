@@ -14,7 +14,7 @@ namespace PragmaLearn.Learner
 {
     public class BackpropNeuralNetwork : SupervisedLearner
     {
-        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg; //, stepSize;
+        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg;
         List<double[]> layers;
         List<double[]> errors;
         List<double[]> bias, deltaBias;
@@ -363,20 +363,6 @@ namespace PragmaLearn.Learner
                 }
             }
         }
-        //void initStepSizes()
-        //{
-        //    foreach (var step in stepSize)
-        //    {
-        //        for (int i = 0; i < step.GetLength(0); ++i)
-        //        {
-        //            for (int j = 0; j < step.GetLength(1); ++j)
-        //            {
-        //                step[i, j] = 1.0;
-        //            }
-
-        //        }
-        //    }
-        //}
 
         void setInput(double[] input)
         {
@@ -660,32 +646,26 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w1; ++j)
                     {
-                        //if (lastdw[i, j] != 0.0)
-                        //{
-                        //    if (Math.Sign(lastdw[i, j]) == Math.Sign(dw[i, j]))
-                        //    {
-                        //        step[i, j] = Math.Min(step[i, j] * 1.2, 100.0);
-                        //    }
-                        //    else
-                        //    {
-                        //        step[i, j] = Math.Max(step[i, j] * 0.5, 0.0001);
-                        //    }
-                        //}
                         if (msa[i, j] == 0.0)
                         {
                             msa[i, j] = dw[i, j] * dw[i, j];
                         }
                         else
                         {
+                            // calculate running average of squared gradient
                             msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
                         }
-                        // w[i, j] -= ( (1.0/count) * dw[i, j] + lambda * w[i, j]) * learningRate;
-                        dw[i, j] += lambda * w[i, j] * learningRate;
-                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]); // + lambda * w[i, j] * learningRate;
-                        w[i, j] -= s1;
+                        dw[i, j] += lambda * w[i, j] * learningRate; // add L1 regularization
 
+                        // divide by sqrt of moving squared average of the squared gradient (RMSPROP)
+                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]);
+                        
+                        // gradient descent (correction step)
+                        w[i, j] -= s1; 
+
+                        // apply nesterov momentum
                         dw[i, j] = (s1 + lastdw[i, j]) * momentum;
-                        w[i, j] -= dw[i, j];
+                        w[i, j] -= dw[i, j];  
                         
                     }
                 }

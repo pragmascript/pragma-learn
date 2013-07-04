@@ -131,7 +131,7 @@ namespace PragmaLearn.Examples
             data = PragmaLearn.Exampels.Datasets.Lines.Create(100000);
             var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
+                network.Init(data.GetInputDimension(), hidden, hidden, hidden, hidden, data.GetOutputDimension());
 
             train(data, batchSize: 100);
         }
