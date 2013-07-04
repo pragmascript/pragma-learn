@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PragmaLearn.Exampels.Datasets
@@ -211,16 +212,27 @@ namespace PragmaLearn.Exampels.Datasets
                 }
             }
 
+            addData(input, output, data);
+        }
+
+        private static void addData(double[] input, double[] output, Dataset data)
+        {
+            Monitor.Enter(data);
+            if (data.input.Count % 1000 == 0)
+                Console.WriteLine("{0}", data.input.Count);
             data.AddPair(input, output);
+            Monitor.Exit(data);
         }
 
         public static Dataset Create(int samples)
         {
             Dataset result = new Dataset();
-            for (int i = 0; i < samples; ++i)
+            Console.WriteLine("creating dataset: ");
+            // for (int i = 0; i < samples; ++i)
+            Parallel.For(0, samples, (x) =>
             {
                 addSample(result);
-            }
+            });
 
             result.VisualizeInput = (input) => Tools.double_to_bmp(input, s_size, s_size);
             result.VisualizeOutput = (output) => Tools.double_to_bmp(output, s_size, s_size);

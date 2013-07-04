@@ -46,37 +46,92 @@ namespace PragmaLearn.Learner
             initRandomWeights(1);
             // initStepSizes();
         }
-    
 
-        
 
-        void addLayer(int dim)
+        public override void Open(string filename)
         {
-            layers.Add(new double[dim]);
-            errors.Add(new double[dim]);
-            bias.Add(new double[dim]);
-            deltaBias.Add(new double[dim]);
-            
-            if (layers.Count >= 2)
+            clear();
+            using (FileStream f = new FileStream(filename, FileMode.Open))
             {
-                var wi = layers[layers.Count - 2].Length;
-                var wj = dim;
-                weights.Add(new double[wi, wj]);
-                deltaWeights.Add(new double[wi, wj]);
-                lastDeltaWeights.Add(new double[wi, wj]);
-                meanSquareAvg.Add(new double[wi, wj]);
-                // stepSize.Add(new double[wi, wj]);
+                using (BinaryReader reader = new BinaryReader(f))
+                {
+                    var wc = reader.ReadInt32();
+                    Debug.Assert(wc == weights.Count);
+                    for (int wx = 0; wx < wc; ++wx)
+                    {
+                        var ix = reader.ReadInt32();
+                        var jx = reader.ReadInt32();
+
+                        if (layers.Count >= 2)
+                        {
+                            if (ix != layers[layers.Count - 1].Length)
+                                throw new FileLoadException();
+                            addLayer(jx);
+                        }
+                        else
+                        {
+                            addLayer(ix);
+                            addLayer(jx);
+                        }
+
+                        var w = weights[weights.Count - 1];
+
+                        for (int i = 0; i < ix; ++i)
+                        {
+                            for (int j = 0; j < jx; ++j)
+                            {
+                                w[i, j] = reader.ReadDouble();
+                            }
+                        }
+                    }
+
+                    foreach (var b in bias)
+                    {
+                        var ix = b.Length;
+                        if (ix != reader.ReadInt32())
+                            throw new FileLoadException();
+                        for (int i = 0; i < ix; ++i)
+                        {
+                            b[i] = reader.ReadDouble();
+                        }
+
+                    }
+                }
             }
         }
 
-        void clear()
+        public override void Save(string filename)
         {
-            layers.Clear();
-            errors.Clear();
-            bias.Clear();
-            deltaBias.Clear();
-            weights.Clear();
-            deltaWeights.Clear();
+            using (FileStream f = new FileStream(filename, FileMode.Create))
+            {
+                using (BinaryWriter writer = new BinaryWriter(f))
+                {
+                    writer.Write(weights.Count);
+                    foreach (var w in weights)
+                    {
+                        var ix = w.GetLength(0);
+                        var jx = w.GetLength(1);
+                        writer.Write(ix);
+                        writer.Write(jx);
+                        for (int i = 0; i < ix; ++i)
+                        {
+                            for (int j = 0; j < jx; ++j)
+                            {
+                                writer.Write(w[i, j]);
+                            }
+                        }
+                    }
+
+                    foreach (var b in bias)
+                    {
+                        writer.Write(b.Length);
+                        for (int i = 0; i < b.Length; ++i)
+                        {
+                            writer.Write(b[i]);
+                        }
+                    }
+                }
+            }
         }
 
         public override double[] Predict(double[] input)
@@ -123,6 +178,55 @@ namespace PragmaLearn.Learner
             return (float)(mse / 2);
         }
 
+        public int[] GetLayers()
+        {
+            return layers.Select(x => x.Length).ToArray();
+        }
+
+        public int GetInputs()
+        {
+            if (layers == null || layers.Count == 0)
+                return 0;
+            return layers[0].Length;
+        }
+
+        public int GetOutputs()
+        {
+            if (layers == null || layers.Count == 0)
+                return 0;
+            return layers.Last().Length;
+        }
+
+        void addLayer(int dim)
+        {
+            layers.Add(new double[dim]);
+            errors.Add(new double[dim]);
+            bias.Add(new double[dim]);
+            deltaBias.Add(new double[dim]);
+            
+            if (layers.Count >= 2)
+            {
+                var wi = layers[layers.Count - 2].Length;
+                var wj = dim;
+                weights.Add(new double[wi, wj]);
+                deltaWeights.Add(new double[wi, wj]);
+                lastDeltaWeights.Add(new double[wi, wj]);
+                meanSquareAvg.Add(new double[wi, wj]);
+                // stepSize.Add(new double[wi, wj]);
+            }
+        }
+
+        void clear()
+        {
+            layers.Clear();
+            errors.Clear();
+            bias.Clear();
+            deltaBias.Clear();
+            weights.Clear();
+            deltaWeights.Clear();
+        }
+
+     
         protected override float train(Dataset data)
         {
             var mse = 0.0;
@@ -137,8 +241,6 @@ namespace PragmaLearn.Learner
             
             return (float)(mse / 2);
         }
-
-
 
         float trainBackprop(Dataset data, IEnumerable<int> indices)
         {
@@ -610,92 +712,6 @@ namespace PragmaLearn.Learner
         void backpropReversed(double[] ty)
         {
             calcErrorsReversed(ty);
-        }
-
-        public override void Open(string filename)
-        {
-            clear();
-            using (FileStream f = new FileStream(filename, FileMode.Open))
-            {
-                using (BinaryReader reader = new BinaryReader(f))
-                {
-                    var wc = reader.ReadInt32();
-                    Debug.Assert(wc == weights.Count);
-                    for (int wx = 0; wx < wc; ++wx )
-                    {
-                        var ix = reader.ReadInt32();
-                        var jx = reader.ReadInt32();
-
-                        if (layers.Count >= 2)
-                        {
-                            if (ix != layers[layers.Count - 1].Length)
-                                throw new FileLoadException();
-                            addLayer(jx);
-                        }
-                        else
-                        {
-                            addLayer(ix);
-                            addLayer(jx);
-                        }
-
-                        var w = weights[weights.Count - 1];
-                    
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            for (int j = 0; j < jx; ++j)
-                            {
-                                w[i, j] = reader.ReadDouble();
-                            }
-                        }
-                    }
-
-                    foreach (var b in bias)
-                    {
-                        var ix = b.Length;
-                        if (ix != reader.ReadInt32())
-                            throw new FileLoadException();
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            b[i] = reader.ReadDouble();
-                        }
-
-                    }
-                }
-            }
-        }
-
-        public override void Save(string filename)
-        {
-            using (FileStream f = new FileStream(filename, FileMode.Create))
-            {
-                using (BinaryWriter writer = new BinaryWriter(f))
-                {
-                    writer.Write(weights.Count);
-                    foreach (var w in weights)
-                    {
-                        var ix = w.GetLength(0);
-                        var jx = w.GetLength(1);
-                        writer.Write(ix);
-                        writer.Write(jx);
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            for (int j = 0; j < jx; ++j)
-                            {
-                                writer.Write(w[i, j]);
-                            }
-                        }
-                    }
-
-                    foreach (var b in bias)
-                    {
-                        writer.Write(b.Length);
-                        for (int i = 0; i < b.Length; ++i)
-                        {
-                            writer.Write(b[i]);
-                        }
-                    }
-                }
-            }
         }
 
         double J(double[] input, double[] output)

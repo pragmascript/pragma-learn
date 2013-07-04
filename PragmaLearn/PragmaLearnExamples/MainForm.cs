@@ -78,26 +78,36 @@ namespace PragmaLearn.Examples
         }
 
 
+        private int[] genMiniBatch(int batchSize)
+        {
+            var batch = new int[batchSize];
+            
+            for (int i = 0; i < batchSize; ++i)
+            {
+                int pos = Tools.rnd.Next(data.input.Count);
+                batch[i] = pos % data.input.Count;
+            }
+
+            return batch;
+        }
+
         volatile bool running;
         private void train(Dataset data, int batchSize = 100, int testModulo = 100)
         {
             Task.Run(() =>
                 {
                     running = true;
-                    var batch = new int[batchSize];
+                    
                     int t = 0;
                     while (running)
                     {
                         t++;
-                        int pos = Tools.rnd.Next(data.input.Count);
-                        for (int i = 0; i < batchSize; ++i)
-                        {
-                            batch[i] = (pos + i) % data.input.Count;
-                        }
+                        var batch = genMiniBatch(batchSize);
                         network.TrainMiniBatch(data, batch);
 
                         Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                        network.learningRate *= 0.9998;
+                        if (network.learningRate > 0.0001)
+                            network.learningRate *= 0.9998;
                         if (t % testModulo == 0)
                         {
                             this.Invoke(test);
@@ -118,9 +128,10 @@ namespace PragmaLearn.Examples
 
         private void bTrainLines_Click(object sender, EventArgs e)
         {
-            data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
+            data = PragmaLearn.Exampels.Datasets.Lines.Create(100000);
             var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
+            if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
+                network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
 
             train(data, batchSize: 100);
         }
@@ -128,6 +139,16 @@ namespace PragmaLearn.Examples
         private void bStop_Click(object sender, EventArgs e)
         {
             running = false;
+        }
+
+        private void bSave_Click(object sender, EventArgs e)
+        {
+            network.Save("network.dat");
+        }
+
+        private void bLoad_Click(object sender, EventArgs e)
+        {
+            network.Open("network.dat");
         }
 
     }
