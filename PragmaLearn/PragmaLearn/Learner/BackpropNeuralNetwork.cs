@@ -658,7 +658,7 @@ namespace PragmaLearn.Learner
                         dw[i, j] += lambda * w[i, j] * learningRate; // add L1 regularization
 
                         // divide by sqrt of moving squared average of the squared gradient (RMSPROP)
-                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j]);
+                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j] + 0.0001);
                         
                         // gradient descent (correction step)
                         w[i, j] -= s1; 

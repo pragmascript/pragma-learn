@@ -70,7 +70,7 @@ namespace PragmaLearn.Exampels.Datasets
         const int maxLineCount = 12;
         const float minLineLength = 2.0f;
         const int size = 128;
-        const int s_size = 16;
+        const int tileSize = 32;
         const float lineDensity = 0.5f;
         const int whiteNoise = 16;
         const float epsilon = 1.5f;
@@ -131,7 +131,7 @@ namespace PragmaLearn.Exampels.Datasets
         {
             using (var g = Graphics.FromImage(bmp))
             {
-                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+                g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                 foreach (var l in lines)
                 {
                     g.DrawLine(Pens.White, l.pos1, l.pos2);
@@ -175,7 +175,7 @@ namespace PragmaLearn.Exampels.Datasets
             var patch = default(Rectangle);
             while (patchEmpty)
             {
-                patch = getRandomPatch(2 * s_size);
+                patch = getRandomPatch(tileSize);
 
                 using (var i_bmp = new Bitmap(size, size))
                 {
@@ -194,7 +194,7 @@ namespace PragmaLearn.Exampels.Datasets
                     if (patchEmpty)
                         continue;
                     // Tools.Once(() => i_bmp.Save("input.png"));
-                    using (var pbmp = i_bmp.GetPatch(patch, s_size))
+                    using (var pbmp = i_bmp.GetPatch(patch, tileSize))
                     {
                         input = Tools.bmp_to_double(pbmp);
                     }
@@ -206,7 +206,7 @@ namespace PragmaLearn.Exampels.Datasets
             {
                 o_bmp.Clear(Color.Black);
                 drawLines(lines, o_bmp);
-                using (var lbmp = o_bmp.GetPatch(patch, s_size))
+                using (var lbmp = o_bmp.GetPatch(patch, tileSize))
                 {
                     output = Tools.bmp_to_double(lbmp);
                 }
@@ -234,8 +234,8 @@ namespace PragmaLearn.Exampels.Datasets
                 addSample(result);
             });
 
-            result.VisualizeInput = (input) => Tools.double_to_bmp(input, s_size, s_size);
-            result.VisualizeOutput = (output) => Tools.double_to_bmp(output, s_size, s_size);
+            result.VisualizeInput = (input) => Tools.double_to_bmp(input, tileSize, tileSize);
+            result.VisualizeOutput = (output) => Tools.double_to_bmp(output, tileSize, tileSize);
 
             return result;
         }

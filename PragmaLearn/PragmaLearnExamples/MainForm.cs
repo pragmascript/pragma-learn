@@ -120,7 +120,8 @@ namespace PragmaLearn.Examples
         {
             data = PragmaLearn.Exampels.Datasets.OCR.Create();
             var hidden = data.GetInputDimension();
-            network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
+            if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
+                network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
             
             train(data, batchSize:100);
 
@@ -128,12 +129,12 @@ namespace PragmaLearn.Examples
 
         private void bTrainLines_Click(object sender, EventArgs e)
         {
-            data = PragmaLearn.Exampels.Datasets.Lines.Create(100000);
+            data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
             var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden, hidden, hidden, hidden, data.GetOutputDimension());
+                network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
 
-            train(data, batchSize: 100);
+            train(data, batchSize: 100, testModulo:100);
         }
 
         private void bStop_Click(object sender, EventArgs e)
