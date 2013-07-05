@@ -18,7 +18,6 @@ namespace PragmaLearn.Learner
                 lastMSE = train(data);
                 if (i % 100 == 0 && test != null) 
                     test();
-                Console.WriteLine("{1} -> MSE: {0}", lastMSE, i);
                 if (lastMSE <= stopMSE)
                     break;
             }

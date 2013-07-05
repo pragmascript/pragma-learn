@@ -106,8 +106,8 @@ namespace PragmaLearn.Examples
                         network.TrainMiniBatch(data, batch);
 
                         Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                        if (network.learningRate > 0.0001)
-                            network.learningRate *= 0.9998;
+                        //if (network.learningRate > 0.0001)
+                        //    network.learningRate *= 0.9998;
                         if (t % testModulo == 0)
                         {
                             this.Invoke(test);
@@ -121,7 +121,10 @@ namespace PragmaLearn.Examples
             data = PragmaLearn.Exampels.Datasets.OCR.Create();
             var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden / 2, hidden / 3, hidden / 4, data.GetOutputDimension());
+                network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
+          
+            network.learningRate = 0.001;
+            network.lambda = 0.0;
             
             train(data, batchSize:100);
 
@@ -129,11 +132,14 @@ namespace PragmaLearn.Examples
 
         private void bTrainLines_Click(object sender, EventArgs e)
         {
-            data = PragmaLearn.Exampels.Datasets.Lines.Create(100);
-            var hidden = data.GetInputDimension() / 2;
+            data = PragmaLearn.Exampels.Datasets.Lines.Create(100000);
+            var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
-            network.learningRate = 0.0003;
+                network.Init(data.GetInputDimension(), hidden, hidden, hidden, data.GetOutputDimension());
+
+            network.learningRate = 0.0001;
+            network.lambda = 1.0;
+
             Task.Run(() =>
             {
                 running = true;
@@ -142,24 +148,21 @@ namespace PragmaLearn.Examples
                 while (running)
                 {
                     t++;
-                    network.Train(data);
-                    data = PragmaLearn.Exampels.Datasets.Lines.Create(100);
-                    // var batch = genMiniBatch(100);
-                    //network.TrainMiniBatch(data, batch);
+                    // network.Train(data);
+                    
+                    var batch = genMiniBatch(100);
+                    network.TrainMiniBatch(data, batch);
 
                     Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                    if (network.learningRate > 0.0001)
+                    if (network.learningRate > 0.00001)
                         network.learningRate *= 0.9998;
-                    if (t % 25 == 0)
+                    if (t % 10 == 0)
                     {
                         this.Invoke(test);
 
                     }
 
-                    //if (t % 1000 == 0)
-                    //{
-                    //    data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
-                    //}
+                   
                 }
             });
         }

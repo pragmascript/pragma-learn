@@ -32,7 +32,6 @@ namespace PragmaLearn.Learner
             bias = new List<double[]>();
             deltaBias = new List<double[]>();
             meanSquareAvg = new List<double[,]>();
-            // stepSize = new List<double[,]>();
             lastDeltaWeights = new List<double[,]>();
 	    }
 
@@ -212,7 +211,6 @@ namespace PragmaLearn.Learner
                 deltaWeights.Add(new double[wi, wj]);
                 lastDeltaWeights.Add(new double[wi, wj]);
                 meanSquareAvg.Add(new double[wi, wj]);
-                // stepSize.Add(new double[wi, wj]);
             }
         }
 
@@ -236,7 +234,9 @@ namespace PragmaLearn.Learner
             mse += trainBackprop(data);
             // mse += trainReversed(data);
 
-            Console.WriteLine(weights[0][0,0]);
+            Console.WriteLine(weights[0][0, 0]);
+            Console.WriteLine(weights[1][0, 0]);
+            Console.WriteLine("mse: " + mse);
             applyDeltaWeights(data.input.Count);
             
             return (float)(mse / 2);
@@ -322,6 +322,16 @@ namespace PragmaLearn.Learner
         }
 
 
+
+        static double activation(double x)
+        {
+            return rec(x);
+        }
+
+        static double activation_diff(double x)
+        {
+            return rec_diff(x);
+        }
 
         static double sigmoid(double x)
         {
@@ -418,7 +428,7 @@ namespace PragmaLearn.Learner
                     if (l >= 1)
                         sum *= 0.5f;
 #endif
-                    y[j] = rec(sum);
+                    y[j] = activation(sum);
                 }
                 );
             }
@@ -450,7 +460,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[i];
                     }
-                    y[j] = rec(sum);
+                    y[j] = activation(sum);
                 }
                  //);
             }
@@ -473,7 +483,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[j];
                     }
-                    y[i] = rec(sum);
+                    y[i] = activation(sum);
                 }
                 );
             }
@@ -505,7 +515,7 @@ namespace PragmaLearn.Learner
                         sum += w[i, j] * ey[j];
                     }
                    
-                    ex[i] = sum * rec_diff(x[i]);
+                    ex[i] = sum * activation_diff(x[i]);
                 }
                 );
             }
@@ -536,7 +546,7 @@ namespace PragmaLearn.Learner
                         sum += w[i, j] * ey[i];
                     }
 
-                    ex[j] = sum * rec_diff(x[j]);
+                    ex[j] = sum * activation_diff(x[j]);
                 }
                 );
             }
@@ -667,7 +677,9 @@ namespace PragmaLearn.Learner
                             // calculate running average of squared gradient
                             msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
                         }
-                        dw[i, j] += lambda * w[i, j] * learningRate; // add L1 regularization
+
+                        // add L1 regularization
+                        dw[i, j] += lambda * w[i, j] * learningRate; 
 
                         // divide by sqrt of moving squared average of the squared gradient (RMSPROP)
                         var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j] + 0.0001);
