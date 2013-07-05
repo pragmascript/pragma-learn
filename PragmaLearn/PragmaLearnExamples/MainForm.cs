@@ -95,7 +95,7 @@ namespace PragmaLearn.Examples
         private void train(Dataset data, int batchSize = 100, int testModulo = 100)
         {
             Task.Run(() =>
-                {
+            {
                     running = true;
                     
                     int t = 0;
@@ -129,12 +129,39 @@ namespace PragmaLearn.Examples
 
         private void bTrainLines_Click(object sender, EventArgs e)
         {
-            data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
-            var hidden = data.GetInputDimension();
+            data = PragmaLearn.Exampels.Datasets.Lines.Create(100);
+            var hidden = data.GetInputDimension() / 2;
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
                 network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
+            network.learningRate = 0.0003;
+            Task.Run(() =>
+            {
+                running = true;
 
-            train(data, batchSize: 100, testModulo:100);
+                int t = 0;
+                while (running)
+                {
+                    t++;
+                    network.Train(data);
+                    data = PragmaLearn.Exampels.Datasets.Lines.Create(100);
+                    // var batch = genMiniBatch(100);
+                    //network.TrainMiniBatch(data, batch);
+
+                    Console.WriteLine("LEARNING RATE: " + network.learningRate);
+                    if (network.learningRate > 0.0001)
+                        network.learningRate *= 0.9998;
+                    if (t % 25 == 0)
+                    {
+                        this.Invoke(test);
+
+                    }
+
+                    //if (t % 1000 == 0)
+                    //{
+                    //    data = PragmaLearn.Exampels.Datasets.Lines.Create(10000);
+                    //}
+                }
+            });
         }
 
         private void bStop_Click(object sender, EventArgs e)

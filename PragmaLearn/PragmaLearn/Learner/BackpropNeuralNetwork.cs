@@ -19,9 +19,9 @@ namespace PragmaLearn.Learner
         List<double[]> errors;
         List<double[]> bias, deltaBias;
 
-        public double learningRate = 0.003;
+        public double learningRate = 0.0003;
         public double momentum = 0.9;
-        const double lambda = 1;
+        public double lambda = 1;
 
         public BackpropNeuralNetwork()
 	    {
@@ -321,6 +321,8 @@ namespace PragmaLearn.Learner
             return (float)(mse / data.input.Count);
         }
 
+
+
         static double sigmoid(double x)
         {
             return 1.0 / (1.0 + Math.Exp(-x));
@@ -338,6 +340,16 @@ namespace PragmaLearn.Learner
         static double sigmoid_diff(double x)
         {
             return x * (1.0 - x);
+        }
+
+        static double rec(double x)
+        {
+            return Math.Max(0, x);
+        }
+
+        static double rec_diff(double x)
+        {
+            return x > 0 ? 1.0 : 0.0;
         }
 
         /// <summary>
@@ -406,7 +418,7 @@ namespace PragmaLearn.Learner
                     if (l >= 1)
                         sum *= 0.5f;
 #endif
-                    y[j] = sigmoid(sum);
+                    y[j] = rec(sum);
                 }
                 );
             }
@@ -438,7 +450,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[i];
                     }
-                    y[j] = sigmoid(sum);
+                    y[j] = rec(sum);
                 }
                  //);
             }
@@ -461,7 +473,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[j];
                     }
-                    y[i] = sigmoid(sum);
+                    y[i] = rec(sum);
                 }
                 );
             }
@@ -493,7 +505,7 @@ namespace PragmaLearn.Learner
                         sum += w[i, j] * ey[j];
                     }
                    
-                    ex[i] = sum * sigmoid_diff(x[i]);
+                    ex[i] = sum * rec_diff(x[i]);
                 }
                 );
             }
@@ -524,7 +536,7 @@ namespace PragmaLearn.Learner
                         sum += w[i, j] * ey[i];
                     }
 
-                    ex[j] = sum * sigmoid_diff(x[j]);
+                    ex[j] = sum * rec_diff(x[j]);
                 }
                 );
             }

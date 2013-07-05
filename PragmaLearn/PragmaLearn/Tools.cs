@@ -15,7 +15,6 @@ namespace PragmaLearn
 {
     public class Tools
     {
-        const double noise = 0;
         static string applicatonPath { get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); } }
         public static readonly string DataPath =  Path.GetFullPath((Path.Combine(applicatonPath, @"..\..\Data\")));
 
@@ -31,7 +30,7 @@ namespace PragmaLearn
         }
         public static Random rnd { get { return randomWrapper.Value; } }
         
-        public static double[] bmp_to_double(Bitmap bmp)
+        public static double[] bmp_to_double(Bitmap bmp, double noise = 0.0)
         {
 
             double[] pixels = new double[bmp.Width * bmp.Height];

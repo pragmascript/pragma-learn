@@ -196,7 +196,7 @@ namespace PragmaLearn.Exampels.Datasets
                     // Tools.Once(() => i_bmp.Save("input.png"));
                     using (var pbmp = i_bmp.GetPatch(patch, tileSize))
                     {
-                        input = Tools.bmp_to_double(pbmp);
+                        input = Tools.bmp_to_double(pbmp, 0.2);
                     }
                 }
             }
