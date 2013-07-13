@@ -33,7 +33,7 @@ namespace PragmaLearn.Exampels.Datasets
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
-                for (int x = 0; x < 1000; ++x)
+                for (int x = 0; x < 100; ++x)
                 {
                     // var fonts = fontsToTrain.Shuffle().ToList();
                    //  foreach (var f in fonts)
@@ -53,10 +53,10 @@ namespace PragmaLearn.Exampels.Datasets
                                 g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
                                 g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                                 g.TranslateTransform(width / 2, height / 2);
-                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 45.0f);
+                                g.RotateTransform(((float)Tools.rnd.NextDouble()-0.5f) * 45);
                                 g.TranslateTransform(-width / 2, -height / 2);
-                                var dx = ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
-                                var dy = ((float)Tools.rnd.NextDouble()-0.5f) * 2.0f;
+                                var dx = ((float)Tools.rnd.NextDouble() - 0.5f) * 2.0f;
+                                var dy = ((float)Tools.rnd.NextDouble() - 0.5f) * 2.0f;
                                 g.TranslateTransform(dx, dy);
                                 g.DrawString(a, font, Brushes.White, rect, stringFormat);
                                 

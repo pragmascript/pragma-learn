@@ -24,7 +24,7 @@ namespace PragmaLearn.Learner
         public double lambda = 1;
 
         public BackpropNeuralNetwork()
-	    {
+        {
             weights = new List<double[,]>();
             deltaWeights = new List<double[,]>();
             layers = new List<double[]>();
@@ -33,7 +33,7 @@ namespace PragmaLearn.Learner
             deltaBias = new List<double[]>();
             meanSquareAvg = new List<double[,]>();
             lastDeltaWeights = new List<double[,]>();
-	    }
+        }
 
 
         public void Init(params int[] layers)
@@ -49,88 +49,103 @@ namespace PragmaLearn.Learner
 
         public override void Open(string filename)
         {
-            clear();
             using (FileStream f = new FileStream(filename, FileMode.Open))
             {
-                using (BinaryReader reader = new BinaryReader(f))
-                {
-                    var wc = reader.ReadInt32();
-                    Debug.Assert(wc == weights.Count);
-                    for (int wx = 0; wx < wc; ++wx)
-                    {
-                        var ix = reader.ReadInt32();
-                        var jx = reader.ReadInt32();
-
-                        if (layers.Count >= 2)
-                        {
-                            if (ix != layers[layers.Count - 1].Length)
-                                throw new FileLoadException();
-                            addLayer(jx);
-                        }
-                        else
-                        {
-                            addLayer(ix);
-                            addLayer(jx);
-                        }
-
-                        var w = weights[weights.Count - 1];
-
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            for (int j = 0; j < jx; ++j)
-                            {
-                                w[i, j] = reader.ReadDouble();
-                            }
-                        }
-                    }
-
-                    foreach (var b in bias)
-                    {
-                        var ix = b.Length;
-                        if (ix != reader.ReadInt32())
-                            throw new FileLoadException();
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            b[i] = reader.ReadDouble();
-                        }
-
-                    }
-                }
+                Open(f);
             }
         }
 
+        public void Open(Stream stream)
+        {
+            clear();
+            BinaryReader reader = new BinaryReader(stream);
+            var wc = reader.ReadInt32();
+            Debug.Assert(wc == weights.Count);
+            for (int wx = 0; wx < wc; ++wx)
+            {
+                var ix = reader.ReadInt32();
+                var jx = reader.ReadInt32();
+
+                if (layers.Count >= 2)
+                {
+                    if (ix != layers[layers.Count - 1].Length)
+                        throw new FileLoadException();
+                    addLayer(jx);
+                }
+                else
+                {
+                    addLayer(ix);
+                    addLayer(jx);
+                }
+
+                var w = weights[weights.Count - 1];
+
+                for (int i = 0; i < ix; ++i)
+                {
+                    for (int j = 0; j < jx; ++j)
+                    {
+                        w[i, j] = reader.ReadDouble();
+                    }
+                }
+            }
+
+            foreach (var b in bias)
+            {
+                var ix = b.Length;
+                if (ix != reader.ReadInt32())
+                    throw new FileLoadException();
+                for (int i = 0; i < ix; ++i)
+                {
+                    b[i] = reader.ReadDouble();
+                }
+
+            }
+        }
         public override void Save(string filename)
         {
             using (FileStream f = new FileStream(filename, FileMode.Create))
             {
-                using (BinaryWriter writer = new BinaryWriter(f))
-                {
-                    writer.Write(weights.Count);
-                    foreach (var w in weights)
-                    {
-                        var ix = w.GetLength(0);
-                        var jx = w.GetLength(1);
-                        writer.Write(ix);
-                        writer.Write(jx);
-                        for (int i = 0; i < ix; ++i)
-                        {
-                            for (int j = 0; j < jx; ++j)
-                            {
-                                writer.Write(w[i, j]);
-                            }
-                        }
-                    }
+                Save(f);
+            }
+        }
 
-                    foreach (var b in bias)
+        public void Save(Stream stream)
+        {
+            BinaryWriter writer = new BinaryWriter(stream);
+            writer.Write(weights.Count);
+            foreach (var w in weights)
+            {
+                var ix = w.GetLength(0);
+                var jx = w.GetLength(1);
+                writer.Write(ix);
+                writer.Write(jx);
+                for (int i = 0; i < ix; ++i)
+                {
+                    for (int j = 0; j < jx; ++j)
                     {
-                        writer.Write(b.Length);
-                        for (int i = 0; i < b.Length; ++i)
-                        {
-                            writer.Write(b[i]);
-                        }
+                        writer.Write(w[i, j]);
                     }
                 }
             }
+
+            foreach (var b in bias)
+            {
+                writer.Write(b.Length);
+                for (int i = 0; i < b.Length; ++i)
+                {
+                    writer.Write(b[i]);
+                }
+            }
+        }
+
+        public BackpropNeuralNetwork Clone()
+        {
+            var result = new BackpropNeuralNetwork();
+            var ms = new MemoryStream();
+            Save(ms);
+            ms.Seek(0, SeekOrigin.Begin);
+            result.Open(ms);
+            return result;
         }
 
         public override double[] Predict(double[] input)
@@ -169,9 +184,10 @@ namespace PragmaLearn.Learner
             mse += trainBackprop(data, indices);
             // mse += trainReversed(data, indices);
 
-            Console.WriteLine(weights[0][0, 0]);
-            Console.WriteLine(weights[1][0, 0]);
-            Console.WriteLine("mse: " + mse / 2);
+            //Console.WriteLine(weights[0][0, 0]);
+            //Console.WriteLine(weights[1][0, 0]);
+            //Console.WriteLine("mse: " + mse / 2);
+
             applyDeltaWeights(indices.Count());
 
             return (float)(mse / 2);
@@ -196,13 +212,33 @@ namespace PragmaLearn.Learner
             return layers.Last().Length;
         }
 
+        public double CalcRMSE(Dataset data)
+        {
+            var error = 0.0;
+            for (int i = 0; i < data.input.Count; ++i)
+            {
+                var p = Predict(data.input[i]);
+                var y = data.output[i];
+                var se = 0.0;
+                for (int j = 0; j < p.Length; ++j)
+                {
+                    se += (p[j] - y[j]) * (p[j] - y[j]);
+                }
+                error += se;
+            }
+
+            error /= (data.output.Count * data.GetOutputDimension());
+
+            return Math.Sqrt(error);
+        }
+
         void addLayer(int dim)
         {
             layers.Add(new double[dim]);
             errors.Add(new double[dim]);
             bias.Add(new double[dim]);
             deltaBias.Add(new double[dim]);
-            
+
             if (layers.Count >= 2)
             {
                 var wi = layers[layers.Count - 2].Length;
@@ -224,13 +260,12 @@ namespace PragmaLearn.Learner
             deltaWeights.Clear();
         }
 
-     
         protected override float train(Dataset data)
         {
             var mse = 0.0;
 
             clearDeltaWeights();
-            
+
             mse += trainBackprop(data);
             // mse += trainReversed(data);
 
@@ -238,7 +273,7 @@ namespace PragmaLearn.Learner
             Console.WriteLine(weights[1][0, 0]);
             Console.WriteLine("mse: " + mse);
             applyDeltaWeights(data.input.Count);
-            
+
             return (float)(mse / 2);
         }
 
@@ -253,7 +288,7 @@ namespace PragmaLearn.Learner
 #else
                 sampleUpDropout();
 #endif
-                mse += CalcMSE(layers[layers.Count - 1], data.output[t]);
+                // mse += CalcMSE(data.output[t], layers[layers.Count - 1]);
                 backprop(data.output[t]);
                 accumulateDeltaWeights();
             }
@@ -266,21 +301,23 @@ namespace PragmaLearn.Learner
             var mse = 0.0;
             foreach (var t in indices)
             {
-                sampleUp();
+                //setInput(data.input[t]);
+                //sampleUp();
+                normalizeFrom(data.output[t].Length, layers.Last());
                 setSparseOutput(data.output[t]);
                 sampleDown();
-                mse += CalcMSE(layers[0], data.input[t]);
+                mse += CalcMSE(data.input[t], layers[0]);
                 backpropReversed(data.input[t]);
                 accumulateDeltaWeightsReversed();
             }
 
-            return (float)(mse / data.input.Count);
+            return (float)(mse / indices.Count());
         }
 
         float trainBackprop(Dataset data)
         {
             // clearErrors();
-            
+
             var mse = 0.0;
             for (int t = 0; t < data.input.Count; ++t)
             {
@@ -292,13 +329,13 @@ namespace PragmaLearn.Learner
 #else
                 sampleUpDropout();
 #endif
-                mse += CalcMSE(layers[layers.Count - 1], data.output[t]);
+                mse += CalcMSE(data.output[t], layers[layers.Count - 1]);
                 backprop(data.output[t]);
                 accumulateDeltaWeights();
 
                 // applyDeltaWeights();
             }
-            
+
 
             return (float)(mse / data.input.Count);
         }
@@ -313,7 +350,7 @@ namespace PragmaLearn.Learner
                 sampleUp();
                 setSparseOutput(data.output[t]);
                 sampleDown();
-                mse += CalcMSE(layers[0], data.input[t]);
+                mse += CalcMSE(data.input[t], layers[0]);
                 backpropReversed(data.input[t]);
                 accumulateDeltaWeightsReversed();
             }
@@ -373,7 +410,7 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w.GetLength(1); ++j)
                     {
-                        w[i, j] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f/Math.Sqrt(w.GetLength(0)));
+                        w[i, j] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f / Math.Sqrt(w.GetLength(0)));
                     }
                 }
             }
@@ -381,10 +418,33 @@ namespace PragmaLearn.Learner
             {
                 for (int i = 0; i < b.Length; ++i)
                 {
-                    b[i] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f/Math.Sqrt(b.Length));
+                    b[i] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f / Math.Sqrt(b.Length));
                 }
             }
         }
+
+        void addUniformNoise(int from, double[] layer, double noise)
+        {
+            for (int i = from; i < layer.Length; ++i)
+            {
+                layer[i] += (Tools.rnd.NextDouble() - 0.5) * 2 * noise;
+            }
+        }
+
+        void normalizeFrom(int from, double[] layer)
+        {
+            var length = 0.0;
+            for (int i = from; i < layer.Length; ++i)
+            {
+                length += Math.Abs(layer[i]);
+            }
+            length += 0.00001;
+            for (int i = from; i < layer.Length; ++i)
+            {
+                layer[i] *= 1.0 / length;
+            }
+        }
+
 
         void setInput(double[] input)
         {
@@ -414,7 +474,7 @@ namespace PragmaLearn.Learner
                 var y = layers[l + 1];
                 var w = weights[l];
                 var b = bias[l + 1];
-                
+
                 // for (int j = 0; j < b.Length; ++j)
                 Parallel.For(0, b.Length, j =>
                 {
@@ -423,7 +483,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * x[i];
                     }
-                    
+
 #if DROPOUT
                     if (l >= 1)
                         sum *= 0.5f;
@@ -462,7 +522,7 @@ namespace PragmaLearn.Learner
                     }
                     y[j] = activation(sum);
                 }
-                 //);
+                //);
             }
         }
 
@@ -494,7 +554,7 @@ namespace PragmaLearn.Learner
             var ey = errors[layers.Count - 1];
             var y = layers[layers.Count - 1];
             // calculate error
-            for (int j = 0; j < y.Length; ++j)
+            for (int j = 0; j < ty.Length; ++j)
             {
                 ey[j] = y[j] - ty[j];
             }
@@ -514,7 +574,7 @@ namespace PragmaLearn.Learner
                     {
                         sum += w[i, j] * ey[j];
                     }
-                   
+
                     ex[i] = sum * activation_diff(x[i]);
                 }
                 );
@@ -562,7 +622,7 @@ namespace PragmaLearn.Learner
                 var x = layers[l];
                 var ey = errors[l + 1];
                 // for (int i = 0; i < x.Length; ++i)
-                Parallel.For(0, x.Length, i => 
+                Parallel.For(0, x.Length, i =>
                 {
                     for (int j = 0; j < ey.Length; ++j)
                     {
@@ -587,7 +647,7 @@ namespace PragmaLearn.Learner
             );
         }
 
-       
+
         void accumulateDeltaWeightsReversed()
         {
             // for (int l = 0; l < deltaWeights.Count; ++l)
@@ -662,7 +722,7 @@ namespace PragmaLearn.Learner
                 var w0 = w.GetLength(0);
                 var w1 = w.GetLength(1);
 
-                
+
                 // for (int i = 0; i < w0; ++i)
                 Parallel.For(0, w0, i =>
                 {
@@ -679,18 +739,18 @@ namespace PragmaLearn.Learner
                         }
 
                         // add L1 regularization
-                        dw[i, j] += lambda * w[i, j] * learningRate; 
+                        dw[i, j] += lambda * w[i, j] * learningRate;
 
                         // divide by sqrt of moving squared average of the squared gradient (RMSPROP)
                         var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j] + 0.0001);
-                        
+
                         // gradient descent (correction step)
-                        w[i, j] -= s1; 
+                        w[i, j] -= s1;
 
                         // apply nesterov momentum
                         dw[i, j] = (s1 + lastdw[i, j]) * momentum;
-                        w[i, j] -= dw[i, j];  
-                        
+                        w[i, j] -= dw[i, j];
+
                     }
                 }
                 );
@@ -744,6 +804,6 @@ namespace PragmaLearn.Learner
             backprop(output);
             accumulateDeltaWeights();
         }
-      
+
     }
 }

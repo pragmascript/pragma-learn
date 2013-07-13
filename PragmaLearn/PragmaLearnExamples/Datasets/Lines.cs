@@ -67,8 +67,8 @@ namespace PragmaLearn.Exampels.Datasets
     class Lines
     {
         const int minLineCount = 1;
-        const int maxLineCount = 12;
-        const float minLineLength = 2.0f;
+        const int maxLineCount = 6;
+        const float minLineLength = 12.0f;
         const int size = 128;
         const int tileSize = 32;
         const float lineDensity = 0.5f;
@@ -171,11 +171,11 @@ namespace PragmaLearn.Exampels.Datasets
 
 
 
-            bool patchEmpty = true;
+            var patchPointCount = 0;
             var patch = default(Rectangle);
-            while (patchEmpty)
+            while (patchPointCount < 5)
             {
-                patch = getRandomPatch(tileSize);
+                patch = getRandomPatch(2 * tileSize);
 
                 using (var i_bmp = new Bitmap(size, size))
                 {
@@ -188,10 +188,10 @@ namespace PragmaLearn.Exampels.Datasets
                         {
                             i_bmp.SetPixel(x, y, Color.White);
                             if (patch.Contains(p.Xi, p.Yi))
-                                patchEmpty = false;
+                                patchPointCount++;
                         }
                     }
-                    if (patchEmpty)
+                    if (patchPointCount < 5)
                         continue;
                     // Tools.Once(() => i_bmp.Save("input.png"));
                     using (var pbmp = i_bmp.GetPatch(patch, tileSize))

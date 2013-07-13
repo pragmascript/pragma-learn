@@ -36,9 +36,11 @@
             this.bStop = new System.Windows.Forms.Button();
             this.bSave = new System.Windows.Forms.Button();
             this.bLoad = new System.Windows.Forms.Button();
+            this.pictureBox4 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             this.SuspendLayout();
             // 
             // bTrainOCR
@@ -53,7 +55,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 205);
+            this.pictureBox1.Location = new System.Drawing.Point(12, 74);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(256, 256);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -100,7 +102,7 @@
             // 
             // bSave
             // 
-            this.bSave.Location = new System.Drawing.Point(12, 96);
+            this.bSave.Location = new System.Drawing.Point(265, 12);
             this.bSave.Name = "bSave";
             this.bSave.Size = new System.Drawing.Size(75, 23);
             this.bSave.TabIndex = 6;
@@ -110,7 +112,7 @@
             // 
             // bLoad
             // 
-            this.bLoad.Location = new System.Drawing.Point(93, 96);
+            this.bLoad.Location = new System.Drawing.Point(358, 12);
             this.bLoad.Name = "bLoad";
             this.bLoad.Size = new System.Drawing.Size(75, 23);
             this.bLoad.TabIndex = 7;
@@ -118,11 +120,21 @@
             this.bLoad.UseVisualStyleBackColor = true;
             this.bLoad.Click += new System.EventHandler(this.bLoad_Click);
             // 
+            // pictureBox4
+            // 
+            this.pictureBox4.Location = new System.Drawing.Point(12, 336);
+            this.pictureBox4.Name = "pictureBox4";
+            this.pictureBox4.Size = new System.Drawing.Size(256, 256);
+            this.pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox4.TabIndex = 8;
+            this.pictureBox4.TabStop = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 612);
+            this.Controls.Add(this.pictureBox4);
             this.Controls.Add(this.bLoad);
             this.Controls.Add(this.bSave);
             this.Controls.Add(this.bStop);
@@ -136,6 +148,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -150,6 +163,7 @@
         private System.Windows.Forms.Button bStop;
         private System.Windows.Forms.Button bSave;
         private System.Windows.Forms.Button bLoad;
+        private System.Windows.Forms.PictureBox pictureBox4;
     }
 }
 

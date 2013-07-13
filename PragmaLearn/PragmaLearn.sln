@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearn.Examples", "Pra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PragmaLearnTest", "PragmaLearnTest\PragmaLearnTest.csproj", "{8222899C-0359-4A29-B88D-54A0ED4663D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaggle", "Kaggle\Kaggle.csproj", "{5E7D71FB-953E-43FE-9B33-169F019DC64A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{8222899C-0359-4A29-B88D-54A0ED4663D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8222899C-0359-4A29-B88D-54A0ED4663D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8222899C-0359-4A29-B88D-54A0ED4663D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E7D71FB-953E-43FE-9B33-169F019DC64A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E7D71FB-953E-43FE-9B33-169F019DC64A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E7D71FB-953E-43FE-9B33-169F019DC64A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E7D71FB-953E-43FE-9B33-169F019DC64A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

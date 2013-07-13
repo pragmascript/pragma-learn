@@ -99,7 +99,10 @@ namespace PragmaLearn
             return bmp;
         }
 
- 
+        public static double Clamp(double x, double min, double max)
+        {
+            return Math.Max(min, Math.Min(max, x));
+        }
 
     }
 }

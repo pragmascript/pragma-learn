@@ -20,56 +20,53 @@ namespace PragmaLearn.Examples
         }
 
 
-
-        void replaceInput(Bitmap bmp)
+        void replaceImage(PictureBox p, Bitmap bmp)
         {
-            if (pictureBox1.Image != null)
+            if (p.Image != null)
             {
-                pictureBox1.Image.Dispose();
+                p.Image.Dispose();
             }
 
-            pictureBox1.Image = bmp;
-            pictureBox1.Refresh();
+            p.Image = bmp;
+            p.Refresh();
+        }
+        void replaceInput(Bitmap bmp)
+        {
+            replaceImage(pictureBox1, bmp);
         }
 
         void replaceOutput(Bitmap bmp)
         {
-            if (pictureBox2.Image != null)
-            {
-                pictureBox2.Image.Dispose();
-            }
-
-            pictureBox2.Image = bmp;
-            pictureBox2.Refresh();
+            replaceImage(pictureBox2, bmp);
         }
         
         void replaceNetworkOutput(Bitmap bmp)
         {
-            if (pictureBox3.Image != null)
-            {
-                pictureBox3.Image.Dispose();
-            }
-
-            pictureBox3.Image = bmp;
-            pictureBox3.Refresh();
+            replaceImage(pictureBox3, bmp);
         }
 
+        void replaceNetworkInput(Bitmap bmp)
+        {
+            replaceImage(pictureBox4, bmp);
+        }
 
         int pos = 0;
         void test()
         {
-            if (data.VisualizeInput != null)
-            {
-                //  replaceInput(data.VisualizeInput((learner as BackpropNeuralNetwork).PredictReversed(data.output[pos % data.input.Count])));
-
-                replaceInput(data.VisualizeInput(data.input[pos % data.input.Count]));
-                // replaceInput(data.VisualizeOutput(data.output[pos % data.output.Count]));
-            }
-
+            var idx = pos % data.input.Count;
+            double[] output = null;
             if (data.VisualizeOutput != null)
             {
-                replaceOutput(data.VisualizeOutput(data.output[pos % data.output.Count]));
-                replaceNetworkOutput(data.VisualizeOutput(network.Predict(data.input[pos % data.input.Count])));
+                replaceOutput(data.VisualizeOutput(data.output[idx].Take(data.GetOutputDimension()).ToArray()));
+                output = network.Predict(data.input[idx]);
+                replaceNetworkOutput(data.VisualizeOutput(output.Take(data.GetOutputDimension()).ToArray()));
+
+            }
+            if (data.VisualizeInput != null)
+            {
+                replaceInput(data.VisualizeInput(data.input[idx]));
+                if (output != null)
+                    replaceNetworkInput(data.VisualizeInput(network.PredictReversed(output)));
             }
 
             
@@ -106,8 +103,8 @@ namespace PragmaLearn.Examples
                         network.TrainMiniBatch(data, batch);
 
                         Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                        //if (network.learningRate > 0.0001)
-                        //    network.learningRate *= 0.9998;
+                        if (network.learningRate > 0.0001)
+                            network.learningRate *= 0.9998;
                         if (t % testModulo == 0)
                         {
                             this.Invoke(test);
@@ -121,9 +118,9 @@ namespace PragmaLearn.Examples
             data = PragmaLearn.Exampels.Datasets.OCR.Create();
             var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
+                network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
           
-            network.learningRate = 0.001;
+            network.learningRate = 0.0001;
             network.lambda = 0.0;
             
             train(data, batchSize:100);
@@ -135,10 +132,10 @@ namespace PragmaLearn.Examples
             data = PragmaLearn.Exampels.Datasets.Lines.Create(100000);
             var hidden = data.GetInputDimension();
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
-                network.Init(data.GetInputDimension(), hidden, hidden, hidden, data.GetOutputDimension());
+                network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
 
             network.learningRate = 0.0001;
-            network.lambda = 1.0;
+            network.lambda = 0.0;
 
             Task.Run(() =>
             {
@@ -154,8 +151,8 @@ namespace PragmaLearn.Examples
                     network.TrainMiniBatch(data, batch);
 
                     Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                    if (network.learningRate > 0.00001)
-                        network.learningRate *= 0.9998;
+                    //if (network.learningRate > 0.0001)
+                    //    network.learningRate *= 0.9998;
                     if (t % 10 == 0)
                     {
                         this.Invoke(test);
