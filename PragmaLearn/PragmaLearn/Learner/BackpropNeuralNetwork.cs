@@ -154,7 +154,7 @@ namespace PragmaLearn.Learner
             sampleUp();
             return layers[layers.Count - 1];
         }
-
+   
         public double[] PredictReversed(double[] output)
         {
             setOutput(output);
@@ -232,6 +232,23 @@ namespace PragmaLearn.Learner
             return Math.Sqrt(error);
         }
 
+   
+
+        public double[] GetInputLayer()
+        {
+            return layers.First();
+        }
+
+        public double[] GetOutputLayer()
+        {
+            return layers.Last();
+        }
+
+        public double[] GetLayer(int layer)
+        {
+            return layers[layer];
+        }
+
         void addLayer(int dim)
         {
             layers.Add(new double[dim]);
@@ -303,7 +320,7 @@ namespace PragmaLearn.Learner
             {
                 //setInput(data.input[t]);
                 //sampleUp();
-                normalizeFrom(data.output[t].Length, layers.Last());
+                //normalizeFrom(data.output[t].Length, layers.Last());
                 setSparseOutput(data.output[t]);
                 sampleDown();
                 mse += CalcMSE(data.input[t], layers[0]);
@@ -363,11 +380,13 @@ namespace PragmaLearn.Learner
         static double activation(double x)
         {
             return rec(x);
+            // return sigmoid(x);
         }
 
         static double activation_diff(double x)
         {
             return rec_diff(x);
+            // return sigmoid_diff(x);
         }
 
         static double sigmoid(double x)
@@ -466,7 +485,7 @@ namespace PragmaLearn.Learner
                     y[i] = output[i];
             }
         }
-        void sampleUp()
+        public void sampleUp()
         {
             for (int l = 0; l < layers.Count - 1; ++l)
             {
@@ -504,14 +523,14 @@ namespace PragmaLearn.Learner
                 var w = weights[l];
                 var b = bias[l + 1];
 
-                for (int j = 0; j < b.Length; ++j)
-                //Parallel.For(0, b.Length, j =>
+                //for (int j = 0; j < b.Length; ++j)
+                Parallel.For(0, b.Length, j =>
                 {
                     if (l < layers.Count - 2 && Tools.rnd.NextDouble() > 0.5)
                     {
                         y[j] = 0;
-                        // return;
-                        continue;
+                        return;
+                        // continue;
                     }
 
                     var sum = b[j] * 1.0;
@@ -522,11 +541,11 @@ namespace PragmaLearn.Learner
                     }
                     y[j] = activation(sum);
                 }
-                //);
+                );
             }
         }
 
-        void sampleDown()
+        public void sampleDown()
         {
             for (int l = layers.Count - 1; l > 0; --l)
             {
@@ -549,6 +568,8 @@ namespace PragmaLearn.Learner
             }
         }
 
+
+
         void calcErrors(double[] ty)
         {
             var ey = errors[layers.Count - 1];
@@ -556,7 +577,11 @@ namespace PragmaLearn.Learner
             // calculate error
             for (int j = 0; j < ty.Length; ++j)
             {
-                ey[j] = y[j] - ty[j];
+                // hack: 
+                if (ty[j] == -1)
+                    ey[j] = 0;
+                else
+                    ey[j] = y[j] - ty[j];
             }
 
             for (int l = layers.Count - 1; l > 1; --l)
