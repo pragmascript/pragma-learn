@@ -1,4 +1,4 @@
-﻿// #define DROPOUT
+﻿#define DROPOUT
 
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace PragmaLearn.Learner
 
         public double learningRate = 0.0003;
         public double momentum = 0.9;
-        public double lambda = 1;
+        public double lambda = 0;
 
         public BackpropNeuralNetwork()
         {
@@ -150,9 +150,33 @@ namespace PragmaLearn.Learner
 
         public override double[] Predict(double[] input)
         {
+            const int samples = 10;
+#if DROPOUT
+            var output = layers.Last();
+            var result = new double[output.Length];
+            
+            for (int i = 0; i < samples; ++i)
+            {
+                setInput(input);
+                sampleUpDropout();
+                for (int x = 0; x < result.Length; ++x)
+                {
+                    result[x] += output[x];
+                }
+            }
+            for (int x = 0; x < result.Length; ++x)
+            {
+                result[x] /= samples;
+            }
+
+            return result;
+            
+#else
             setInput(input);
             sampleUp();
             return layers[layers.Count - 1];
+#endif
+
         }
    
         public double[] PredictReversed(double[] output)
@@ -418,6 +442,7 @@ namespace PragmaLearn.Learner
             return x > 0 ? 1.0 : 0.0;
         }
 
+
         /// <summary>
         /// inits weights to uniformly random between [-size, size]
         /// </summary>
@@ -485,6 +510,7 @@ namespace PragmaLearn.Learner
                     y[i] = output[i];
             }
         }
+
         public void sampleUp()
         {
             for (int l = 0; l < layers.Count - 1; ++l)
@@ -504,7 +530,7 @@ namespace PragmaLearn.Learner
                     }
 
 #if DROPOUT
-                    if (l >= 1)
+                    if (l >= 1 && l < layers.Count - 2)
                         sum *= 0.5f;
 #endif
                     y[j] = activation(sum);
