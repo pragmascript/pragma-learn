@@ -1,4 +1,4 @@
-﻿#define DROPOUT
+﻿// #define DROPOUT
 
 using System;
 using System.Collections.Generic;
@@ -377,7 +377,7 @@ namespace PragmaLearn.Learner
                 // applyDeltaWeights();
             }
 
-
+            
             return (float)(mse / data.input.Count);
         }
 
@@ -421,7 +421,7 @@ namespace PragmaLearn.Learner
         static double sigmoid_stochastic(double x)
         {
             var s = sigmoid(x);
-            if (Tools.rnd.NextDouble() <= s)
+            if (Tools.rnd.Uniform() <= s)
                 return 1.0;
             else
                 return 0.0;
@@ -441,8 +441,6 @@ namespace PragmaLearn.Learner
         {
             return x > 0 ? 1.0 : 0.0;
         }
-
-
         /// <summary>
         /// inits weights to uniformly random between [-size, size]
         /// </summary>
@@ -454,7 +452,7 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w.GetLength(1); ++j)
                     {
-                        w[i, j] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f / Math.Sqrt(w.GetLength(0)));
+                        w[i, j] = (Tools.rnd.Uniform() - 0.5) * 2.0 * (1.0f / Math.Sqrt(w.GetLength(0)));
                     }
                 }
             }
@@ -462,7 +460,7 @@ namespace PragmaLearn.Learner
             {
                 for (int i = 0; i < b.Length; ++i)
                 {
-                    b[i] = (Tools.rnd.NextDouble() - 0.5) * 2.0 * (1.0f / Math.Sqrt(b.Length));
+                    b[i] = (Tools.rnd.Uniform() - 0.5) * 2.0 * (1.0f / Math.Sqrt(b.Length));
                 }
             }
         }
@@ -471,7 +469,7 @@ namespace PragmaLearn.Learner
         {
             for (int i = from; i < layer.Length; ++i)
             {
-                layer[i] += (Tools.rnd.NextDouble() - 0.5) * 2 * noise;
+                layer[i] += (Tools.rnd.Uniform() - 0.5) * 2 * noise;
             }
         }
 
@@ -552,7 +550,7 @@ namespace PragmaLearn.Learner
                 //for (int j = 0; j < b.Length; ++j)
                 Parallel.For(0, b.Length, j =>
                 {
-                    if (l < layers.Count - 2 && Tools.rnd.NextDouble() > 0.5)
+                    if (l < layers.Count - 2 && Tools.rnd.Uniform() > 0.5)
                     {
                         y[j] = 0;
                         return;

@@ -10,6 +10,18 @@ namespace PragmaLearn
 {
     public static class Extensions
     {
+
+        public static double Uniform(this Random rnd)
+        {
+            return rnd.NextDouble();
+        }
+
+        public static int Index(this Random rnd, int max)
+        {
+            return rnd.Next(max);
+        }
+
+
         public static Bitmap ScaleTo(this Bitmap bmp, int nx, int ny)
         {
             var result = new Bitmap(nx, ny);

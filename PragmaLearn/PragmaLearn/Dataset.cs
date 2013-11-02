@@ -68,7 +68,7 @@ namespace PragmaLearn
                 else
                     d = testData;
 
-                var pos = Tools.rnd.Next(indices.Count);
+                var pos = Tools.rnd.Index(indices.Count);
                 var x = indices[pos];
                 indices.RemoveAt(pos);
                 d.AddPair(input[x], output[x]);

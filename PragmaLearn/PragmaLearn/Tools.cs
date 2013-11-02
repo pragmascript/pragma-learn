@@ -28,8 +28,15 @@ namespace PragmaLearn
         {
             return randomWrapper.Value;
         }
-        public static Random rnd { get { return randomWrapper.Value; } }
+       //  public static Random rnd { get { return randomWrapper.Value; } }
+
+
+    
+
+        public static RandomOps.ThreadSafe.CMWC4096 rnd = new RandomOps.ThreadSafe.CMWC4096(); 
+
         
+
         public static double[] bmp_to_double(Bitmap bmp, double noise = 0.0)
         {
 
@@ -42,7 +49,7 @@ namespace PragmaLearn
                 {
                     var b = bmp.GetPixel(i, j).GetBrightness();
                     // if (b == 0) b = -1.0f;
-                    double f = b + (Tools.rnd.NextDouble()-0.5) * noise;
+                    double f = b + (Tools.rnd.Uniform() - 0.5) * noise;
                     pixels[n] = f;
                     n++;
                 }
