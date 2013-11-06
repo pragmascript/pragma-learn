@@ -33,14 +33,14 @@ namespace PragmaLearn
 
     
 
-        public static RandomOps.ThreadSafe.CMWC4096 rnd = new RandomOps.ThreadSafe.CMWC4096(); 
+        public static RandomOps.ThreadSafe.CMWC4096 rnd = new RandomOps.ThreadSafe.CMWC4096();
 
-        
 
-        public static double[] bmp_to_double(Bitmap bmp, double noise = 0.0)
+
+        public static float[] bmp_to_float(Bitmap bmp, float noise = 0.0f)
         {
 
-            double[] pixels = new double[bmp.Width * bmp.Height];
+            float[] pixels = new float[bmp.Width * bmp.Height];
 
             int n = 0;
             for (int j = 0; j < bmp.Height; j++)
@@ -49,8 +49,8 @@ namespace PragmaLearn
                 {
                     var b = bmp.GetPixel(i, j).GetBrightness();
                     // if (b == 0) b = -1.0f;
-                    double f = b + (Tools.rnd.Uniform() - 0.5) * noise;
-                    pixels[n] = f;
+                    var f = b + (Tools.rnd.Uniform() - 0.5f) * noise;
+                    pixels[n] = (float)f;
                     n++;
                 }
             }
@@ -58,7 +58,7 @@ namespace PragmaLearn
             return pixels;
         }
 
-        internal static Color getColor(double h)
+        internal static Color getColor(float h)
         {
             if (h > 1) h = 1;
             if (h < 0)
@@ -83,7 +83,7 @@ namespace PragmaLearn
         /// <summary>
         /// slow slow slow. as hell.
         /// </summary>
-        public static Bitmap double_to_bmp(double[] pixels, int sx = 16, int sy = 16)
+        public static Bitmap float_to_bmp(float[] pixels, int sx = 16, int sy = 16)
         {
             Bitmap bmp = new Bitmap(sx, sy);
 
@@ -106,7 +106,7 @@ namespace PragmaLearn
             return bmp;
         }
 
-        public static double Clamp(double x, double min, double max)
+        public static float Clamp(float x, float min, float max)
         {
             return Math.Max(min, Math.Min(max, x));
         }

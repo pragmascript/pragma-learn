@@ -14,22 +14,22 @@ namespace PragmaLearn
 {
     public class Dataset
     {
-        public List<double[]> input;
-        public List<double[]> output;
+        public List<float[]> input;
+        public List<float[]> output;
 
         public Dataset()
         {
-            input = new List<double[]>();
-            output = new List<double[]>();
+            input = new List<float[]>();
+            output = new List<float[]>();
         }
 
-        public void AddPair(double[] inp, double[] outp)
+        public void AddPair(float[] inp, float[] outp)
         {
             input.Add(inp);
             output.Add(outp);
         }
 
-        public void AddPairSync(double[] inp, double[] outp)
+        public void AddPairSync(float[] inp, float[] outp)
         {
             Monitor.Enter(this);
             AddPair(inp, outp);
@@ -50,7 +50,7 @@ namespace PragmaLearn
             return output[0].Length;
         }
 
-        public void RandomSplit(double ratio, out Dataset trainData, out Dataset testData)
+        public void RandomSplit(float ratio, out Dataset trainData, out Dataset testData)
         {
             if (ratio < 0 || ratio > 1)
                 throw new ArgumentException("ratio must be in [0, 1]");
@@ -131,23 +131,23 @@ namespace PragmaLearn
 
             for (int i = 0; i < count; ++i)
             {
-                var inpa = new double[inpc];
+                var inpa = new float[inpc];
                 for (int x = 0; x < inpc; ++x)
                 {
-                    inpa[x] = reader.ReadDouble();
+                    inpa[x] = (float)reader.ReadSingle();
                 }
 
-                var outpa = new double[outc];
+                var outpa = new float[outc];
                 for (int y = 0; y < outc; ++y)
                 {
-                    outpa[y] = reader.ReadDouble();
+                    outpa[y] = (float)reader.ReadSingle();
                 }
 
                 AddPair(inpa, outpa);
             }
         }
 
-        public Func<double[], Bitmap> VisualizeInput = null;
-        public Func<double[], Bitmap> VisualizeOutput = null;
+        public Func<float[], Bitmap> VisualizeInput = null;
+        public Func<float[], Bitmap> VisualizeOutput = null;
     }
 }

@@ -54,7 +54,7 @@ namespace PragmaLearn.Examples
         void test()
         {
             var idx = pos % data.input.Count;
-            double[] output = null;
+            float[] output = null;
             if (data.VisualizeOutput != null)
             {
                 replaceOutput(data.VisualizeOutput(data.output[idx].Take(data.GetOutputDimension()).ToArray()));
@@ -103,8 +103,8 @@ namespace PragmaLearn.Examples
                         network.TrainMiniBatch(data, batch);
 
                         Console.WriteLine("LEARNING RATE: " + network.learningRate);
-                        if (network.learningRate > 0.0001)
-                            network.learningRate *= 0.9998;
+                        if (network.learningRate > 0.0001f)
+                            network.learningRate *= 0.9998f;
                         if (t % testModulo == 0)
                         {
                             this.Invoke(test);
@@ -120,8 +120,8 @@ namespace PragmaLearn.Examples
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
                 network.Init(data.GetInputDimension(), hidden, data.GetOutputDimension());
           
-            network.learningRate = 0.0001;
-            network.lambda = 0.0;
+            network.learningRate = 0.0001f;
+            network.lambda = 0.0f;
             
             train(data, batchSize:100);
 
@@ -134,8 +134,8 @@ namespace PragmaLearn.Examples
             if (network.GetInputs() != data.GetInputDimension() || network.GetOutputs() != data.GetOutputDimension())
                 network.Init(data.GetInputDimension(), hidden, hidden, data.GetOutputDimension());
 
-            network.learningRate = 0.0001;
-            network.lambda = 0.0;
+            network.learningRate = 0.0001f;
+            network.lambda = 0.0f;
 
             Task.Run(() =>
             {

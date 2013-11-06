@@ -22,6 +22,16 @@ namespace PragmaLearn
         }
 
 
+        public static double NextDouble(this RandomOps.Random rnd)
+        {
+            return rnd.Uniform();
+        }
+
+        public static int Next(this RandomOps.Random rnd, int max)
+        {
+            return rnd.Index(max);
+        }
+
         public static Bitmap ScaleTo(this Bitmap bmp, int nx, int ny)
         {
             var result = new Bitmap(nx, ny);

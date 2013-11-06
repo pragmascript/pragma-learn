@@ -61,9 +61,9 @@ namespace PragmaLearn.Exampels.Datasets
                                 g.DrawString(a, font, Brushes.White, rect, stringFormat);
                                 
                                 g.ResetTransform();
-                                var inp = Tools.bmp_to_double(bmp);
-                                var outp = new double[alphabet.Length];
-                                outp[i] = 1.0;
+                                var inp = Tools.bmp_to_float(bmp);
+                                var outp = new float[alphabet.Length];
+                                outp[i] = 1.0f;
                                 result.AddPair(inp, outp);
                             }
                         }
@@ -79,13 +79,13 @@ namespace PragmaLearn.Exampels.Datasets
 
         }
 
-        static Bitmap visualizeInput(double[] input)
+        static Bitmap visualizeInput(float[] input)
         {
-            return Tools.double_to_bmp(input, width, height);
+            return Tools.float_to_bmp(input, width, height);
         }
 
 
-        static Bitmap visualizeOutput(double[] output)
+        static Bitmap visualizeOutput(float[] output)
         {
             var max = output.MaxIndex();
 

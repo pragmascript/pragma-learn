@@ -155,8 +155,8 @@ namespace PragmaLearn.Exampels.Datasets
 
         static void addSample(Dataset data)
         {
-            var input = default(double[]);
-            var output = default(double[]);
+            var input = default(float[]);
+            var output = default(float[]);
             var count = minLineCount + Tools.rnd.Next(maxLineCount - minLineCount + 1);
             var points = new List<Vec2>();
             var lines = new List<LineSegment>();
@@ -196,7 +196,7 @@ namespace PragmaLearn.Exampels.Datasets
                     // Tools.Once(() => i_bmp.Save("input.png"));
                     using (var pbmp = i_bmp.GetPatch(patch, tileSize))
                     {
-                        input = Tools.bmp_to_double(pbmp,0);
+                        input = Tools.bmp_to_float(pbmp,0);
                     }
                 }
             }
@@ -208,14 +208,14 @@ namespace PragmaLearn.Exampels.Datasets
                 drawLines(lines, o_bmp);
                 using (var lbmp = o_bmp.GetPatch(patch, tileSize))
                 {
-                    output = Tools.bmp_to_double(lbmp);
+                    output = Tools.bmp_to_float(lbmp);
                 }
             }
 
             addData(input, output, data);
         }
 
-        private static void addData(double[] input, double[] output, Dataset data)
+        private static void addData(float[] input, float[] output, Dataset data)
         {
             Monitor.Enter(data);
             if (data.input.Count % 1000 == 0)
@@ -234,8 +234,8 @@ namespace PragmaLearn.Exampels.Datasets
                 addSample(result);
             });
 
-            result.VisualizeInput = (input) => Tools.double_to_bmp(input, tileSize, tileSize);
-            result.VisualizeOutput = (output) => Tools.double_to_bmp(output, tileSize, tileSize);
+            result.VisualizeInput = (input) => Tools.float_to_bmp(input, tileSize, tileSize);
+            result.VisualizeOutput = (output) => Tools.float_to_bmp(output, tileSize, tileSize);
 
             return result;
         }

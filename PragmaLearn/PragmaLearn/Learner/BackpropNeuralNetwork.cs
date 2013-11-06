@@ -14,25 +14,25 @@ namespace PragmaLearn.Learner
 {
     public class BackpropNeuralNetwork : SupervisedLearner
     {
-        List<double[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg;
-        List<double[]> layers;
-        List<double[]> errors;
-        List<double[]> bias, deltaBias;
+        List<float[,]> weights, deltaWeights, lastDeltaWeights, meanSquareAvg;
+        List<float[]> layers;
+        List<float[]> errors;
+        List<float[]> bias, deltaBias;
 
-        public double learningRate = 0.0003;
-        public double momentum = 0.9;
-        public double lambda = 0;
+        public float learningRate = 0.0003f;
+        public float momentum = 0.9f;
+        public float lambda = 0f;
 
         public BackpropNeuralNetwork()
         {
-            weights = new List<double[,]>();
-            deltaWeights = new List<double[,]>();
-            layers = new List<double[]>();
-            errors = new List<double[]>();
-            bias = new List<double[]>();
-            deltaBias = new List<double[]>();
-            meanSquareAvg = new List<double[,]>();
-            lastDeltaWeights = new List<double[,]>();
+            weights = new List<float[,]>();
+            deltaWeights = new List<float[,]>();
+            layers = new List<float[]>();
+            errors = new List<float[]>();
+            bias = new List<float[]>();
+            deltaBias = new List<float[]>();
+            meanSquareAvg = new List<float[,]>();
+            lastDeltaWeights = new List<float[,]>();
         }
 
 
@@ -84,7 +84,7 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < jx; ++j)
                     {
-                        w[i, j] = reader.ReadDouble();
+                        w[i, j] = (float)reader.ReadSingle();
                     }
                 }
             }
@@ -96,7 +96,7 @@ namespace PragmaLearn.Learner
                     throw new FileLoadException();
                 for (int i = 0; i < ix; ++i)
                 {
-                    b[i] = reader.ReadDouble();
+                    b[i] = (float)reader.ReadSingle();
                 }
 
             }
@@ -148,12 +148,12 @@ namespace PragmaLearn.Learner
             return result;
         }
 
-        public override double[] Predict(double[] input)
+        public override float[] Predict(float[] input)
         {
             const int samples = 10;
 #if DROPOUT
             var output = layers.Last();
-            var result = new double[output.Length];
+            var result = new float[output.Length];
             
             for (int i = 0; i < samples; ++i)
             {
@@ -179,7 +179,7 @@ namespace PragmaLearn.Learner
 
         }
    
-        public double[] PredictReversed(double[] output)
+        public float[] PredictReversed(float[] output)
         {
             setOutput(output);
             sampleDown();
@@ -236,7 +236,7 @@ namespace PragmaLearn.Learner
             return layers.Last().Length;
         }
 
-        public double CalcRMSE(Dataset data)
+        public float CalcRMSE(Dataset data)
         {
             var error = 0.0;
             for (int i = 0; i < data.input.Count; ++i)
@@ -253,41 +253,41 @@ namespace PragmaLearn.Learner
 
             error /= (data.output.Count * data.GetOutputDimension());
 
-            return Math.Sqrt(error);
+            return (float)Math.Sqrt(error);
         }
 
    
 
-        public double[] GetInputLayer()
+        public float[] GetInputLayer()
         {
             return layers.First();
         }
 
-        public double[] GetOutputLayer()
+        public float[] GetOutputLayer()
         {
             return layers.Last();
         }
 
-        public double[] GetLayer(int layer)
+        public float[] GetLayer(int layer)
         {
             return layers[layer];
         }
 
         void addLayer(int dim)
         {
-            layers.Add(new double[dim]);
-            errors.Add(new double[dim]);
-            bias.Add(new double[dim]);
-            deltaBias.Add(new double[dim]);
+            layers.Add(new float[dim]);
+            errors.Add(new float[dim]);
+            bias.Add(new float[dim]);
+            deltaBias.Add(new float[dim]);
 
             if (layers.Count >= 2)
             {
                 var wi = layers[layers.Count - 2].Length;
                 var wj = dim;
-                weights.Add(new double[wi, wj]);
-                deltaWeights.Add(new double[wi, wj]);
-                lastDeltaWeights.Add(new double[wi, wj]);
-                meanSquareAvg.Add(new double[wi, wj]);
+                weights.Add(new float[wi, wj]);
+                deltaWeights.Add(new float[wi, wj]);
+                lastDeltaWeights.Add(new float[wi, wj]);
+                meanSquareAvg.Add(new float[wi, wj]);
             }
         }
 
@@ -401,50 +401,50 @@ namespace PragmaLearn.Learner
 
 
 
-        static double activation(double x)
+        static float activation(float x)
         {
             return rec(x);
             // return sigmoid(x);
         }
 
-        static double activation_diff(double x)
+        static float activation_diff(float x)
         {
             return rec_diff(x);
             // return sigmoid_diff(x);
         }
 
-        static double sigmoid(double x)
+        static float sigmoid(float x)
         {
-            return 1.0 / (1.0 + Math.Exp(-x));
+            return (float)(1.0f / (1.0f + Math.Exp(-x)));
         }
 
-        static double sigmoid_stochastic(double x)
+        static float sigmoid_stochastic(float x)
         {
             var s = sigmoid(x);
             if (Tools.rnd.Uniform() <= s)
-                return 1.0;
+                return 1.0f;
             else
-                return 0.0;
+                return 0.0f;
         }
 
-        static double sigmoid_diff(double x)
+        static float sigmoid_diff(float x)
         {
-            return x * (1.0 - x);
+            return x * (1.0f - x);
         }
 
-        static double rec(double x)
+        static float rec(float x)
         {
             return Math.Max(0, x);
         }
 
-        static double rec_diff(double x)
+        static float rec_diff(float x)
         {
-            return x > 0 ? 1.0 : 0.0;
+            return x > 0 ? 1.0f : 0.0f;
         }
         /// <summary>
         /// inits weights to uniformly random between [-size, size]
         /// </summary>
-        void initRandomWeights(double size = 0.1)
+        void initRandomWeights(float size = 0.1f)
         {
             foreach (var w in weights)
             {
@@ -452,7 +452,7 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w.GetLength(1); ++j)
                     {
-                        w[i, j] = (Tools.rnd.Uniform() - 0.5) * 2.0 * (1.0f / Math.Sqrt(w.GetLength(0)));
+                        w[i, j] = (float)((Tools.rnd.Uniform() - 0.5f) * 2.0f * (1.0f / Math.Sqrt(w.GetLength(0))));
                     }
                 }
             }
@@ -460,46 +460,46 @@ namespace PragmaLearn.Learner
             {
                 for (int i = 0; i < b.Length; ++i)
                 {
-                    b[i] = (Tools.rnd.Uniform() - 0.5) * 2.0 * (1.0f / Math.Sqrt(b.Length));
+                    b[i] = (float)((Tools.rnd.Uniform() - 0.5) * 2.0 * (1.0f / Math.Sqrt(b.Length)));
                 }
             }
         }
 
-        void addUniformNoise(int from, double[] layer, double noise)
+        void addUniformNoise(int from, float[] layer, float noise)
         {
             for (int i = from; i < layer.Length; ++i)
             {
-                layer[i] += (Tools.rnd.Uniform() - 0.5) * 2 * noise;
+                layer[i] += (float)((Tools.rnd.Uniform() - 0.5) * 2 * noise);
             }
         }
 
-        void normalizeFrom(int from, double[] layer)
+        void normalizeFrom(int from, float[] layer)
         {
-            var length = 0.0;
+            var length = 0.0f;
             for (int i = from; i < layer.Length; ++i)
             {
                 length += Math.Abs(layer[i]);
             }
-            length += 0.00001;
+            length += 0.00001f;
             for (int i = from; i < layer.Length; ++i)
             {
-                layer[i] *= 1.0 / length;
+                layer[i] *= 1.0f / length;
             }
         }
 
 
-        void setInput(double[] input)
+        void setInput(float[] input)
         {
             input.CopyTo(layers[0], 0);
         }
 
-        void setOutput(double[] output)
+        void setOutput(float[] output)
         {
             output.CopyTo(layers[layers.Count - 1], 0);
         }
 
 
-        void setSparseOutput(double[] output)
+        void setSparseOutput(float[] output)
         {
             var y = layers[layers.Count - 1];
             for (int i = 0; i < output.Length; ++i)
@@ -521,7 +521,7 @@ namespace PragmaLearn.Learner
                 // for (int j = 0; j < b.Length; ++j)
                 Parallel.For(0, b.Length, j =>
                 {
-                    var sum = b[j] * 1.0;
+                    var sum = b[j] * 1.0f;
                     for (int i = 0; i < x.Length; ++i)
                     {
                         sum += w[i, j] * x[i];
@@ -550,14 +550,14 @@ namespace PragmaLearn.Learner
                 //for (int j = 0; j < b.Length; ++j)
                 Parallel.For(0, b.Length, j =>
                 {
-                    if (l < layers.Count - 2 && Tools.rnd.Uniform() > 0.5)
+                    if (l < layers.Count - 2 && Tools.rnd.Uniform() > 0.5f)
                     {
                         y[j] = 0;
                         return;
                         // continue;
                     }
 
-                    var sum = b[j] * 1.0;
+                    var sum = b[j] * 1.0f;
 
                     for (int i = 0; i < x.Length; ++i)
                     {
@@ -581,7 +581,7 @@ namespace PragmaLearn.Learner
                 // for (int i = 0; i < w.GetLength(0); ++i)
                 Parallel.For(0, b.Length, i =>
                 {
-                    var sum = b[i] * 1.0;
+                    var sum = b[i] * 1.0f;
                     for (int j = 0; j < x.Length; ++j)
                     {
                         sum += w[i, j] * x[j];
@@ -594,7 +594,7 @@ namespace PragmaLearn.Learner
 
 
 
-        void calcErrors(double[] ty)
+        void calcErrors(float[] ty)
         {
             var ey = errors[layers.Count - 1];
             var y = layers[layers.Count - 1];
@@ -618,7 +618,7 @@ namespace PragmaLearn.Learner
                 // for (int i = 0; i < x.Length; ++i)
                 Parallel.For(0, x.Length, i =>
                 {
-                    var sum = 0.0;
+                    var sum = 0.0f;
                     for (int j = 0; j < ey.Length; ++j)
                     {
                         sum += w[i, j] * ey[j];
@@ -630,7 +630,7 @@ namespace PragmaLearn.Learner
             }
         }
 
-        void calcErrorsReversed(double[] ty)
+        void calcErrorsReversed(float[] ty)
         {
             var ey = errors[0];
             var y = layers[0];
@@ -649,7 +649,7 @@ namespace PragmaLearn.Learner
                 // for (int j = 0; j < x.Length; ++j)
                 Parallel.For(0, x.Length, j =>
                 {
-                    var sum = 0.0;
+                    var sum = 0.0f;
                     for (int i = 0; i < ey.Length; ++i)
                     {
                         sum += w[i, j] * ey[i];
@@ -690,7 +690,7 @@ namespace PragmaLearn.Learner
                 var db = deltaBias[l];
                 for (int j = 0; j < ey.Length; ++j)
                 {
-                    db[j] += 1.0 * ey[j];
+                    db[j] += 1.0f * ey[j];
                 }
             }
             );
@@ -722,7 +722,7 @@ namespace PragmaLearn.Learner
                 var db = deltaBias[l];
                 for (int j = 0; j < ey.Length; ++j)
                 {
-                    db[j] += 1.0 * ey[j];
+                    db[j] += 1.0f * ey[j];
                 }
             }
             );
@@ -758,7 +758,7 @@ namespace PragmaLearn.Learner
 
         void applyDeltaWeights(int count = 1)
         {
-            var lr = learningRate * (1.0 / count);
+            var lr = learningRate * (1.0f / count);
 
             for (int l = 0; l < weights.Count; ++l)
             {
@@ -777,21 +777,21 @@ namespace PragmaLearn.Learner
                 {
                     for (int j = 0; j < w1; ++j)
                     {
-                        if (msa[i, j] == 0.0)
+                        if (msa[i, j] == 0.0f)
                         {
                             msa[i, j] = dw[i, j] * dw[i, j];
                         }
                         else
                         {
                             // calculate running average of squared gradient
-                            msa[i, j] = 0.9 * msa[i, j] + 0.1 * dw[i, j] * dw[i, j];
+                            msa[i, j] = 0.9f * msa[i, j] + 0.1f * dw[i, j] * dw[i, j];
                         }
 
                         // add L1 regularization
                         dw[i, j] += lambda * w[i, j] * learningRate;
 
                         // divide by sqrt of moving squared average of the squared gradient (RMSPROP)
-                        var s1 = learningRate * dw[i, j] / Math.Sqrt(msa[i, j] + 0.0001);
+                        var s1 = learningRate * dw[i, j] / (float)Math.Sqrt(msa[i, j] + 0.0001f);
 
                         // gradient descent (correction step)
                         w[i, j] -= s1;
@@ -817,19 +817,19 @@ namespace PragmaLearn.Learner
             }
         }
 
-        void backprop(double[] ty)
+        void backprop(float[] ty)
         {
             calcErrors(ty);
         }
 
-        void backpropReversed(double[] ty)
+        void backpropReversed(float[] ty)
         {
             calcErrorsReversed(ty);
         }
 
-        double J(double[] input, double[] output)
+        float J(float[] input, float[] output)
         {
-            var result = 0.0;
+            var result = 0.0f;
 
             setInput(input);
             sampleUp();
@@ -844,7 +844,7 @@ namespace PragmaLearn.Learner
             return result;
         }
 
-        void checkGradient(double[] input, double[] output)
+        void checkGradient(float[] input, float[] output)
         {
             clearDeltaWeights();
 

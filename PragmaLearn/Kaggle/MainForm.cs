@@ -71,10 +71,10 @@ namespace Kaggle
             replaceImage(pictureBox4, bmp);
         }
 
-        Bitmap vizKeypoints(double[] input, double[] output)
+        Bitmap vizKeypoints(float[] input, float[] output)
         {
             var s = KeypointData.imgSize;
-            var bmp = Tools.double_to_bmp(input, s, s);
+            var bmp = Tools.float_to_bmp(input, s, s);
 
 
             for (int ix = 0; ix < output.Length; ix += 2)
@@ -102,7 +102,7 @@ namespace Kaggle
             var s = KeypointData.imgSize;
             var p = clonedNet.Predict(input);
             replaceNetworkOutput(vizKeypoints(input, p));
-            replaceInput(Tools.double_to_bmp(input, s, s));
+            replaceInput(Tools.float_to_bmp(input, s, s));
         }
 
         void displayTrain(int pos)
@@ -124,10 +124,10 @@ namespace Kaggle
             var p = clonedNet.Predict(input);
             replaceNetworkOutput(vizKeypoints(input, p));
             replaceOutput(vizKeypoints(data.input[pos], data.output[pos]));
-            replaceInput(Tools.double_to_bmp(input, s, s));
+            replaceInput(Tools.float_to_bmp(input, s, s));
 
             clonedNet.sampleDown();
-            replaceNetworkInput(Tools.double_to_bmp(clonedNet.GetInputLayer(), s, s));
+            replaceNetworkInput(Tools.float_to_bmp(clonedNet.GetInputLayer(), s, s));
         }
 
         int pos = 0;
@@ -259,7 +259,7 @@ namespace Kaggle
         }
 
         volatile bool running;
-        private void train(Dataset data, int batchSize = 50, int testModulo = 1000)
+        private void train(Dataset data, int batchSize = 100, int testModulo = 250)
         {
             Task.Run(() =>
             {
@@ -307,7 +307,7 @@ namespace Kaggle
         {
             resultData = KeypointData.LoadResultData();
             var data = KeypointData.LoadTrainData();
-            data.RandomSplit(0.9, out trainData, out testData);
+            data.RandomSplit(0.9f, out trainData, out testData);
 
 
             var hidden = trainData.GetInputDimension();
@@ -317,7 +317,7 @@ namespace Kaggle
 
         private void bTrain_Click(object sender, EventArgs e)
         {
-            network.learningRate = 0.00001;// 0.001;
+            network.learningRate = 0.00001f;// 0.001;
             network.lambda = 1;
             train(trainData, batchSize: 50, testModulo: 250);
         }

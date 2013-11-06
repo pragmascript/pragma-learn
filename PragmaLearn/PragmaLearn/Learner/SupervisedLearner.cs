@@ -8,10 +8,10 @@ namespace PragmaLearn.Learner
 {
     public abstract class SupervisedLearner
     {
-        double lastMSE;
-        public abstract double[] Predict(double[] input);
+        float lastMSE;
+        public abstract float[] Predict(float[] input);
 
-        public virtual double Train(Dataset data, int maxIterations = 1, double stopMSE = 0.0, Action test = null)
+        public virtual float Train(Dataset data, int maxIterations = 1, float stopMSE = 0.0f, Action test = null)
         {
             for (int i = 0; i < maxIterations; ++i)
             {
@@ -25,9 +25,9 @@ namespace PragmaLearn.Learner
             return lastMSE;
         }
 
-        public double CalcMSE(Dataset data)
+        public float CalcMSE(Dataset data)
         {
-            double se = 0;
+            float se = 0;
             for (int i = 0; i < data.input.Count; ++i)
             {
                 se += CalcMSE(data.output[i], Predict(data.input[i]));
@@ -44,9 +44,9 @@ namespace PragmaLearn.Learner
             }
         }
         
-        public static double CalcMSE(double[] x, double[] y)
+        public static float CalcMSE(float[] x, float[] y)
         {
-            double se = 0;
+            float se = 0;
 
             for (int i = 0; i < x.Length; ++i)
             {

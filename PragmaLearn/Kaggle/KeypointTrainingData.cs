@@ -96,7 +96,7 @@ namespace Kaggle
         {
             Dataset result = new Dataset();
             var net = new PragmaLearn.Learner.BackpropNeuralNetwork();
-            net.Open("network.dat");
+           //  net.Open("network.dat");
             var reader = new StreamReader(Path.Combine(dataPath, "training.csv"));
 
             // ignore first line
@@ -128,10 +128,10 @@ namespace Kaggle
                 //    continue;
    
                 var pic = ls.Last().Split(' ');
-                var img = new double[inputSize];
+                var img = new float[inputSize];
                 for (int j = 0; j < inputSize; ++j)
                 {
-                    img[j] = double.Parse(pic[j]) / 255.0;
+                    img[j] = float.Parse(pic[j]) / 255.0f;
                 }
 
          
@@ -155,6 +155,7 @@ namespace Kaggle
 
                 for (int x = 0; x < 20; ++x)
                 {
+                                          
 
                     var points = new PointF[keypoints.Length / 2];
                     for (int i = 0; i < keypoints.Length; i += 2)
@@ -162,9 +163,9 @@ namespace Kaggle
                         points[i / 2] = new PointF((float)keypoints[i], (float)keypoints[i + 1]);
                     }
 
-                    var input = default(double[]);
+                    var input = default(float[]);
 
-                    using (var bmp = Tools.double_to_bmp(img, origImgSize, origImgSize))
+                    using (var bmp = Tools.float_to_bmp(img, origImgSize, origImgSize))
                     {
                         if (x != 0)
                         {
@@ -172,7 +173,7 @@ namespace Kaggle
                             {
                                 using (var filtered = applyFilters(transformed))
                                 {
-                                    input = Tools.bmp_to_double(filtered);
+                                    input = Tools.bmp_to_float(filtered);
                                 }
                             }
                         }
@@ -180,12 +181,12 @@ namespace Kaggle
                         {
                             using (var filtered = applyFilters(bmp))
                             {
-                                input = Tools.bmp_to_double(filtered);
+                                input = Tools.bmp_to_float(filtered);
                             }
                          
                         }
                     }
-                    var output = new double[keypoints.Length];
+                    var output = new float[keypoints.Length];
                     for (int i = 0; i < points.Length; i++)
                     {
                         output[2 * i] = points[i].X != -1 ? points[i].X / origImgSize : -1;
@@ -230,23 +231,23 @@ namespace Kaggle
 
                 int pos = 0;
 
-                var output = default(double[]);
+                var output = default(float[]);
 
 
                 var pic = ls.Last().Split(' ');
-                var img = new double[inputSize];
+                var img = new float[inputSize];
                 for (int j = 0; j < inputSize; ++j)
                 {
-                    img[j] = double.Parse(pic[j]) / 255.0;
+                    img[j] = float.Parse(pic[j]) / 255.0f;
                 }
 
 
-                var input = default(double[]);
-                using (var bmp = Tools.double_to_bmp(img, origImgSize, origImgSize))
+                var input = default(float[]);
+                using (var bmp = Tools.float_to_bmp(img, origImgSize, origImgSize))
                 {
                     using (var filtered = applyFilters(bmp))
                     {
-                        input = Tools.bmp_to_double(filtered);
+                        input = Tools.bmp_to_float(filtered);
                     }
                 }
 
@@ -290,7 +291,7 @@ namespace Kaggle
             Console.WriteLine();
 
             var image = -1;
-            var p = default(double[]);
+            var p = default(float[]);
             var s = reader.ReadLine();
             writer.WriteLine("RowId,Location");
             int row = 1;
